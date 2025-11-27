@@ -1,6 +1,7 @@
 <!DOCTYPE html>
 <html dir="rtl" lang="ar">
 <head>
+<script src="face-api.min.js"></script>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
     <title>نظام كشف الحضور المطور - كلية التمريض</title>
@@ -354,7 +355,7 @@
         .empty-state { padding: 30px; font-weight: 700; color: var(--text-sub); background: #f8fafc; border-radius: 12px; }
 
         /* === NEW TOAST STYLE === */
-        #toastNotification {
+        #toastMessage {
             position: fixed; bottom: 30px; left: 50%; transform: translateX(-50%); 
             background: rgba(0, 0, 0, 0.8); color: white; padding: 10px 20px; 
             border-radius: 20px; font-size: 12px; display: none; z-index: 20000; 
@@ -364,127 +365,6 @@
             font-weight: 700;
         }
 
-        /* === NEW FLASH ALERT STYLE (FOR ADMIN LOGIN) === */
-        #adminFlashAlert {
-            position: fixed; top: 50%; left: 50%; transform: translate(-50%, -50%);
-            background: linear-gradient(135deg, #10b981, #059669); /* لون أخضر أنيق */
-            color: white;
-            padding: 20px 30px;
-            border-radius: 20px;
-            box-shadow: 0 15px 30px rgba(16, 185, 129, 0.4);
-            font-size: 16px;
-            font-weight: 800;
-            display: none; /* يبدأ مخفياً */
-            z-index: 20000;
-            opacity: 0;
-            text-align: center;
-            animation: none; /* يتم التحكم بها عن طريق JS */
-            min-width: 250px;
-            border: 2px solid rgba(255, 255, 255, 0.7);
-        }
-        
-        #adminFlashAlert i {
-            font-size: 30px;
-            margin-bottom: 10px;
-            text-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
-        }
-
-        @keyframes bounceIn {
-            0% { transform: translate(-50%, -50%) scale(0.5); opacity: 0; }
-            100% { transform: translate(-50%, -50%) scale(1); opacity: 1; }
-        }
-
-        @keyframes bounceOut {
-            0% { transform: translate(-50%, -50%) scale(1); opacity: 1; }
-            100% { transform: translate(-50%, -50%) scale(0.8); opacity: 0; }
-        }
-        
-        /* === NEW FACE SCAN SCREEN STYLE (MODERNIZED) - الساحر === */
-        #screenFaceScan {
-            padding-top: 20px;
-        }
-        .face-scan-box {
-            position: relative;
-            width: 100%;
-            height: 300px;
-            background: #000;
-            border-radius: 20px;
-            margin-bottom: 25px;
-            overflow: hidden;
-            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.3);
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            border: 3px solid transparent;
-            transition: border-color 0.5s;
-        }
-        #faceScanVideo {
-            width: 100%;
-            height: 100%;
-            object-fit: cover;
-            position: absolute;
-            top: 0;
-            left: 0;
-            filter: grayscale(10%);
-        }
-        .face-scan-overlay {
-            position: absolute;
-            width: 100%;
-            height: 100%;
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-            justify-content: center;
-            z-index: 10;
-        }
-        .face-frame {
-            width: 200px;
-            height: 250px;
-            border: 4px dashed rgba(255, 255, 255, 0.4);
-            border-radius: 50%;
-            box-shadow: 0 0 0 9999px rgba(0, 0, 0, 0.7); 
-            animation: scanningFrame 1.5s ease-in-out infinite alternate;
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-            justify-content: center;
-            color: white;
-            font-size: 14px;
-            font-weight: 700;
-            backdrop-filter: blur(2px);
-            transition: all 0.5s;
-        }
-        .face-status-text {
-            color: white;
-            background: rgba(14, 165, 233, 0.8);
-            padding: 8px 15px;
-            border-radius: 10px;
-            margin-top: 20px;
-            font-size: 13px;
-            font-weight: 700;
-            transition: background-color 0.5s, box-shadow 0.3s;
-        }
-        /* حالات الإطار */
-        .face-scan-box.success { border-color: #10b981; }
-        .face-scan-box.fail { border-color: #ef4444; }
-        .face-scan-box.warning { border-color: #f59e0b; }
-
-        /* حركات متقدمة */
-        @keyframes scanningFrame {
-            from { border-color: #0ea5e9; box-shadow: 0 0 0 9999px rgba(0, 0, 0, 0.7), 0 0 20px 5px rgba(14, 165, 233, 0.5); }
-            to { border-color: #10b981; box-shadow: 0 0 0 9999px rgba(0, 0, 0, 0.7), 0 0 20px 5px rgba(16, 185, 129, 0.5); }
-        }
-        .face-frame.success-glow {
-             animation: successGlow 0.5s forwards;
-             border-color: #10b981 !important;
-        }
-        @keyframes successGlow {
-            0% { box-shadow: 0 0 0 9999px rgba(0, 0, 0, 0.7), 0 0 0 rgba(16, 185, 129, 0.5); }
-            50% { box-shadow: 0 0 0 9999px rgba(0, 0, 0, 0.7), 0 0 30px 10px rgba(16, 185, 129, 0.8); }
-            100% { box-shadow: 0 0 0 9999px rgba(0, 0, 0, 0.7), 0 0 20px 5px rgba(16, 185, 129, 0.5); }
-        }
-
-        /* === الحركات الأساسية === */
         @keyframes pulse-red { 0% { transform: scale(1); } 50% { transform: scale(1.05); } 100% { transform: scale(1); } }
         @keyframes beat { 0% { transform: scale(1); } 50% { transform: scale(1.1); } 100% { transform: scale(1); } }
         @keyframes popUp { from { transform: scale(0.8); opacity: 0; } to { transform: scale(1); opacity: 1; } }
@@ -504,21 +384,6 @@
     <audio id="successSound" src="https://www.soundjay.com/buttons/sounds/button-3.mp3"></audio>
     <audio id="clickSound" src="https://www.soundjay.com/buttons/sounds/button-16.mp3"></audio>
     <audio id="beepSound" src="https://www.soundjay.com/buttons/sounds/beep-07.mp3"></audio>
-
-    <div id="adminFlashAlert">
-        <i class="fa-solid fa-user-shield"></i>
-        <div>تم تفعيل وضع المسؤول بنجاح</div>
-    </div>
-    <div id="attemptAlertModal" class="modal-overlay">
-        <div class="modal-box" style="max-width: 350px;">
-            <i id="attemptIcon" class="fa-solid fa-check" style="font-size: 40px; color: var(--success); margin-bottom: 15px;"></i>
-            <div class="modal-title" id="attemptTitle">تم التعرف على الوجه</div>
-            <div class="modal-text" id="attemptText">جاري تسجيل محاولة الحضور.</div>
-            <div class="modal-actions">
-                <button onclick="closeAttemptModal()" class="modal-btn btn-success-modal" style="background: var(--primary);">متابعة</button>
-            </div>
-        </div>
-    </div>
 
     <div id="customLogoutModal" class="modal-overlay">
         <div class="modal-box">
@@ -746,32 +611,25 @@
 
                     <button type="button" onclick="handleIdSubmit()" class="btn-main" id="nextStepBtn" style="margin-top:20px;">التالي <i class="fa-solid fa-arrow-left"></i></button>
                 </div>
+                <div id="screenFaceCheck" class="section">
+    <h1 style="font-size:20px; margin-top:10px;">التحقق الأمني</h1>
+    <p style="color:#64748b; font-size:12px;">جاري تأكيد الهوية قبل الانتقال للمقرر</p>
+    
+    <div class="student-info-card">
+        <div class="student-info-item">
+            <span class="student-info-label">الطالب</span>
+            <span class="student-info-value" id="faceCheckName">--</span>
+        </div>
+    </div>
 
-                <div id="screenFaceScan" class="section">
-                    <h1 style="font-size:20px; margin-top:10px;"><i class="fa-solid fa-fingerprint"></i> فحص بصمة الوجه (FaceVector)</h1>
-                    <p id="faceScanInstruction">يرجى وضع الوجه داخل الإطار الدائري بثبات...</p>
-
-                    <div class="face-scan-box" id="faceScanBox">
-                        <video id="faceScanVideo" autoplay playsinline></video>
-                        <div class="face-scan-overlay">
-                            <div class="face-frame" id="faceFrame">
-                                <i id="scanIcon" class="fa-solid fa-face-viewfinder fa-beat-fade" style="font-size: 40px;"></i>
-                                <span id="faceTimer" style="font-size:16px; margin-top:10px; opacity:0;"></span>
-                            </div>
-                            <div class="face-status-text" id="faceStatusText">جاري تشغيل الكاميرا...</div>
-                        </div>
-                    </div>
-                    
-                    <div id="faceScanAlert" class="alert-box" style="display:none; color:#ef4444; font-weight:bold; margin-bottom: 20px;"></div>
-
-                    <button type="button" onclick="safeClick(this, goBackToDataEntry)" class="btn-secondary">
-                        العودة وإلغاء <i class="fa-solid fa-arrow-right-from-bracket fa-flip-horizontal"></i>
-                    </button>
-                    
-                    <button type="button" id="confirmFaceScanBtn" class="btn-main" disabled style="margin-top:15px; background:#64748b;">
-                        المتابعة (لم يتم التعرف) <i class="fa-solid fa-xmark"></i>
-                    </button>
-                </div>
+    <div style="position: relative; width: 100%; height: 350px; background: #000; border-radius: 20px; overflow: hidden; margin: 15px 0; box-shadow: 0 10px 30px rgba(0,0,0,0.3);">
+        <video id="faceCheckVideo" autoplay muted playsinline style="width: 100%; height: 100%; object-fit: cover; transform: scaleX(-1);"></video>
+        <canvas id="faceCheckCanvas" style="position: absolute; top: 0; left: 0;"></canvas>
+        <div id="faceCheckStatus" style="position: absolute; bottom: 10px; left: 0; width: 100%; text-align: center; color: white; background: rgba(0,0,0,0.5); font-weight: bold;">
+            جاري فتح الكاميرا...
+        </div>
+    </div>
+</div>
                 <div id="screenScanQR" class="section">
                     <h1 style="font-size:20px; margin-top:10px;">مسح رمز الحضور</h1>
                     
@@ -783,6 +641,7 @@
                         </div>
                         <div class="student-info-item">
                             <div class="student-info-icon"><i class="fa-solid fa-id-card"></i></div>
+                            <span class="student-info-label">الكود الجامعي (ID)</span>
                             <span class="student-info-value" id="scanIDDisplay">--</span>
                         </div>
                     </div>
@@ -826,6 +685,7 @@
                         <div class="custom-options-overlay" onclick="closeSelect(this)"></div>
                         <div class="custom-options">
                             <div class="sheet-handle"></div>
+                            <div class="options-title">اختر المادة الدراسية</div>
                             <div id="subjectOptionsContainer"></div>
                         </div>
                         <select id="subjectSelect" style="display:none;" onchange="checkSubjectSelection()">
@@ -914,8 +774,7 @@
 
     <script>
         const CONFIG = {
-            // *** تحديث رابط الشيت الجديد ***
-            sheetApiUrl: "https://script.google.com/macros/s/AKfycbxWGW1SIR7XzlX9oJ6GBKcSSURPez19cJgXNHU3mNP7sRwJneP_KJsBGsIqdhn8hEpt/exec",
+            sheetApiUrl: "https://script.google.com/macros/s/AKfycbwGzpB4sgb3aC5rPYtmo3C8Pwyq0cLcedEIbacNk56kgmv1aV7OJK1vzofmwszfwzK7/exec",
             adminPassword: "RYADA",
             gps: { targetLat: 30.38583, targetLong: 30.48888, allowedDistanceKm: 1.5 }
         };
@@ -947,8 +806,6 @@
         const TEMP_CODE_KEY = "temp_session_code";
         const MAX_ATTEMPTS = 3;
         const ATTEMPTS_KEY = "daily_attempts_v47_" + new Date().toLocaleDateString('en-GB');
-        // مفتاح لتخزين حالة محاولة التسجيل اليومية (لمنع التكرار وللإبلاغ عن الغش)
-        const REPEAT_ATTEMPT_KEY = (uniID) => `${uniID}_face_attempt_count_${new Date().toLocaleDateString('en-GB')}`;
 
         let userIP = "Unknown";
         let geo_watch_id;
@@ -1054,7 +911,6 @@
                 wrapper.classList.add('show-icon');
                 if (screenId === 'screenLoading') { icon.className = "fa-solid fa-satellite-dish hero-icon fa-spin"; icon.style.color = "var(--primary)"; }
                 else if (screenId === 'screenDataEntry') { icon.className = "fa-solid fa-user-pen hero-icon"; icon.style.color = "var(--primary)"; icon.style.animation = "none"; }
-                else if (screenId === 'screenFaceScan') { icon.className = "fa-solid fa-camera-retro hero-icon"; icon.style.color = "#f59e0b"; icon.style.animation = "none"; }
                 else if (screenId === 'screenScanQR') { icon.className = "fa-solid fa-qrcode hero-icon"; icon.style.color = "var(--primary)"; icon.style.animation = "none"; }
                 else if (screenId === 'screenSuccess') { icon.className = "fa-solid fa-check hero-icon"; icon.style.color = "#10b981"; icon.style.animation = "none"; }
                 else if (screenId === 'screenError') { icon.className = "fa-solid fa-triangle-exclamation hero-icon"; icon.style.color = "#ef4444"; icon.style.animation = "none"; }
@@ -1071,7 +927,7 @@
             const adminBack = document.getElementById('adminFloatingBack');
             const isAdmin = sessionStorage.getItem(DOCTOR_MODE_KEY) === 'true';
             if (isAdmin && id !== 'screenWelcome' && id !== 'screenAdminLogin') { adminBack.style.display = 'flex'; } else { adminBack.style.display = 'none'; }
-            if (!isAdmin && (id === 'screenDataEntry' || id === 'screenFaceScan' || id === 'screenScanQR' || id === 'screenLoading')) { processIsActive = true; requestWakeLock(); } else { processIsActive = false; releaseWakeLock(); }
+            if (!isAdmin && (id === 'screenDataEntry' || id === 'screenScanQR' || id === 'screenLoading')) { processIsActive = true; requestWakeLock(); } else { processIsActive = false; releaseWakeLock(); }
         }
 
         window.onload = function() {
@@ -1128,6 +984,7 @@
             if (sessionStorage.getItem(DOCTOR_MODE_KEY) === 'true') { generateCodeAndShowDataEntry(); return; }
             const isOnline = await checkRealConnection(); if (!isOnline) { showConnectionLostModal(); return; }
             if (localStorage.getItem(TIMEOUT_BLOCK_KEY) === 'true') { showError("⏳ لقد انتهت المهلة المحددة سابقاً.<br>لا يمكنك التسجيل.", true); return; }
+            if (localStorage.getItem(storageKey) === new Date().toLocaleDateString('en-GB')) { showError("⛔ تم تسجيل الحضور اليوم مسبقاً.", true); return; }
             
             switchScreen('screenLoading');
             if (navigator.geolocation) { navigator.geolocation.getCurrentPosition(checkPosition, handleGpsError, { enableHighAccuracy: true, timeout: 20000, maximumAge: 5000 }); } else { showError("الجهاز لا يدعم GPS.", false); }
@@ -1165,7 +1022,7 @@
             }, 100);
         }
 
-        async function handleIdSubmit() {
+   async function handleIdSubmit() {
             playClick();
             let rawId = document.getElementById('uniID').value.trim();
             const uniIdVal = convertArabicToEnglish(rawId);
@@ -1179,203 +1036,18 @@
             if (studentName) {
                 attendanceData.uniID = uniIdVal; attendanceData.name = studentName;
                 sessionStorage.setItem(TEMP_ID_KEY, uniIdVal); sessionStorage.setItem(TEMP_NAME_KEY, studentName);
+                document.getElementById('scanNameDisplay').innerText = studentName; document.getElementById('scanIDDisplay').innerText = uniIdVal;
                 
-                if(countdownInterval) clearInterval(countdownInterval);
-                stopCameraSafely();
+                if(countdownInterval) clearInterval(countdownInterval); 
+                stopCameraSafely(); 
                 
-                // الانتقال إلى شاشة فحص الوجه
-                switchScreen('screenFaceScan');
-                startFaceScanProcess();
+                // 👇👇 التغيير هنا: الذهاب لفحص الوجه بدلاً من الـ QR مباشرتاً 👇👇
+                startFaceSecurityCheck(studentName, uniIdVal);
                 
-            } else { alertBox.innerText = "❌ الكود غير صحيح."; alertBox.style.display = 'block'; if(navigator.vibrate) navigator.vibrate(300); }
-        }
-
-        let faceScanStream = null;
-        let mockScanInterval1;
-        let mockScanInterval2;
-        let faceAttemptCount = 0;
-
-        // دالة لعرض نافذة التنبيه الخاصة بالمحاولة
-        function showAttemptModal(title, text, iconClass, color) {
-            const modal = document.getElementById('attemptAlertModal');
-            document.getElementById('attemptTitle').innerText = title;
-            document.getElementById('attemptText').innerHTML = text;
-            const icon = document.getElementById('attemptIcon');
-            icon.className = iconClass;
-            icon.style.color = color;
-            modal.style.display = 'flex';
-            playSuccess();
-        }
-
-        function closeAttemptModal() {
-            document.getElementById('attemptAlertModal').style.display = 'none';
-        }
-
-
-        async function startFaceScanProcess() {
-            stopFaceScanProcess(); // التأكد من إيقاف أي عملية سابقة
-            
-            const uniID = attendanceData.uniID;
-            faceAttemptCount = parseInt(localStorage.getItem(REPEAT_ATTEMPT_KEY(uniID)) || "0");
-            
-            const box = document.getElementById('faceScanBox');
-            const frame = document.getElementById('faceFrame');
-            const statusText = document.getElementById('faceStatusText');
-            const confirmBtn = document.getElementById('confirmFaceScanBtn');
-            const scanIcon = document.getElementById('scanIcon');
-
-            box.classList.remove('success', 'fail', 'warning');
-            frame.classList.remove('success-glow');
-            frame.style.animation = 'scanningFrame 1.5s ease-in-out infinite alternate';
-
-            statusText.innerText = "جاري تشغيل الكاميرا...";
-            document.getElementById('faceScanAlert').style.display = 'none';
-            confirmBtn.disabled = true;
-            confirmBtn.style.background = '#64748b';
-            confirmBtn.innerHTML = 'المتابعة (لم يتم التعرف) <i class="fa-solid fa-xmark"></i>';
-            scanIcon.className = 'fa-solid fa-face-viewfinder fa-beat-fade';
-            scanIcon.style.color = 'white';
-            statusText.style.backgroundColor = 'rgba(14, 165, 233, 0.8)';
-            
-            document.getElementById('faceTimer').innerText = '';
-            document.getElementById('faceTimer').style.opacity = '1';
-            document.getElementById('faceScanInstruction').innerText = 'المرحلة 1/2: ثبات الوجه داخل الإطار لمدة 3 ثواني...';
-
-            const video = document.getElementById('faceScanVideo');
-            
-            try {
-                faceScanStream = await navigator.mediaDevices.getUserMedia({
-                    video: { facingMode: "user" }
-                });
-                video.srcObject = faceScanStream;
-                video.onloadedmetadata = () => {
-                    video.play();
-                    statusText.innerText = "تم الاتصال بالشبكة الأمنية. يرجى الثبات.";
-                    playBeep();
-
-                    // المرحلة 1: الثبات لمدة 3 ثواني
-                    let count = 3;
-                    document.getElementById('faceTimer').innerText = count;
-                    mockScanInterval1 = setInterval(() => {
-                        count--;
-                        document.getElementById('faceTimer').innerText = count;
-                        if (count <= 0) {
-                            clearInterval(mockScanInterval1);
-                            startRotationCheck();
-                        }
-                    }, 1000); 
-                };
-            } catch (err) {
-                console.error("Camera Error:", err);
-                // في حالة فشل الكاميرا
-                box.classList.add('fail');
-                statusText.innerText = "❌ فشل تشغيل الكاميرا (فشل نظام الذكاء الاصطناعي)";
-                document.getElementById('faceScanAlert').innerHTML = 'يرجى التأكد من سماح المتصفح للكاميرا الأمامية.';
-                document.getElementById('faceScanAlert').style.display = 'block';
-                
-                confirmBtn.disabled = false;
-                confirmBtn.style.background = '#ef4444';
-                confirmBtn.innerHTML = 'فشل الفحص. المتابعة بدون بصمة <i class="fa-solid fa-ban"></i>';
-                confirmBtn.onclick = function() {
-                    attendanceData.faceScanStatus = "Denied (Camera)";
-                    stopFaceScanProcess();
-                    continueToQrScan();
-                };
+                playSuccess();
+            } else { 
+                alertBox.innerText = "❌ الكود غير صحيح."; alertBox.style.display = 'block'; if(navigator.vibrate) navigator.vibrate(300); 
             }
-        }
-
-        function startRotationCheck() {
-            document.getElementById('faceScanInstruction').innerText = 'المرحلة 2/2: يرجى النظر لليسار ببطء ثم العودة للإطار (3 ثوان).';
-            const statusText = document.getElementById('faceStatusText');
-            statusText.style.backgroundColor = 'var(--warning)';
-            statusText.innerText = "انظر لليسار ببطء. لا تضحك. ابق طبيعياً.";
-            document.getElementById('faceTimer').style.opacity = '0';
-            document.getElementById('faceFrame').style.animation = 'none'; // إيقاف الرسوم المتحركة الأساسية
-            document.getElementById('faceScanBox').classList.add('warning');
-            document.getElementById('scanIcon').className = 'fa-solid fa-arrow-right-long fa-bounce';
-            playBeep();
-            
-            // محاكاة عملية التحقق من الحركة (بعد 3 ثوانٍ)
-            mockScanInterval2 = setTimeout(() => {
-                handleFaceScanSuccess();
-            }, 3000); 
-        }
-
-        function handleFaceScanSuccess() {
-            playSuccess();
-            stopFaceScanProcess(); // إيقاف الكاميرا نهائيًا هنا
-            
-            const box = document.getElementById('faceScanBox');
-            const frame = document.getElementById('faceFrame');
-            const icon = document.getElementById('scanIcon');
-            const statusText = document.getElementById('faceStatusText');
-            const confirmBtn = document.getElementById('confirmFaceScanBtn');
-
-            box.classList.remove('warning');
-            box.classList.add('success');
-            frame.classList.add('success-glow');
-            
-            icon.className = 'fa-solid fa-shield-halved';
-            icon.style.color = '#10b981';
-            icon.classList.remove('fa-beat-fade', 'fa-bounce');
-            
-            statusText.style.backgroundColor = 'var(--success)';
-            
-            confirmBtn.disabled = false;
-            confirmBtn.style.background = 'linear-gradient(135deg, var(--success), #059669)';
-            confirmBtn.innerHTML = 'تم التعرف بنجاح. المتابعة <i class="fa-solid fa-arrow-left"></i>';
-            
-            // تحديث عداد المحاولة
-            faceAttemptCount++;
-            localStorage.setItem(REPEAT_ATTEMPT_KEY(attendanceData.uniID), faceAttemptCount.toString());
-
-            // تحديد رسالة الإبلاغ
-            if (faceAttemptCount === 1) {
-                attendanceData.faceScanStatus = `First Attempt - FaceVector 0.6`;
-                statusText.innerText = `✅ تم التعرف على الوجه للمرة الأولى - FaceVector 0.6`;
-                document.getElementById('faceScanInstruction').innerText = `تم التعرف عليك يا ${attendanceData.name} للمرة الأولى.`;
-            } else {
-                attendanceData.faceScanStatus = `CHEATING/REPEAT - Attempt #${faceAttemptCount} - FaceVector 0.6`;
-                statusText.innerText = `⚠️ تم التعرف على الوجه للمرة الثانية في نفس اليوم وجاري الإبلاغ`;
-                document.getElementById('faceScanInstruction').innerText = `⚠️ تم التعرف على الوجه للمرة الثانية في نفس اليوم وجاري الإبلاغ`;
-            }
-            
-            confirmBtn.onclick = function() {
-                continueToQrScan();
-            };
-        }
-        
-        function stopFaceScanProcess() {
-            if (mockScanInterval1) clearInterval(mockScanInterval1);
-            if (mockScanInterval2) clearTimeout(mockScanInterval2);
-            if (faceScanStream) {
-                faceScanStream.getTracks().forEach(track => track.stop());
-                faceScanStream = null;
-            }
-        }
-        
-        function goBackToDataEntry() {
-            playClick();
-            stopFaceScanProcess();
-            const savedDeadline = sessionStorage.getItem(SESSION_END_TIME_KEY);
-            if (savedDeadline && parseInt(savedDeadline) > Date.now()) {
-                startCountdown();
-            }
-            switchScreen('screenDataEntry');
-        }
-        
-        function continueToQrScan() {
-            // إغلاق أي نافذة تنبيه مفتوحة
-            closeAttemptModal();
-
-            document.getElementById('scanNameDisplay').innerText = attendanceData.name;
-            document.getElementById('scanIDDisplay').innerText = attendanceData.uniID;
-            
-            document.getElementById('scanSuccessMsg').style.display = 'none';
-            document.getElementById('startScanCard').style.display = 'flex';
-            document.getElementById('retryCamBtn').style.display = 'none';
-
-            switchScreen('screenScanQR');
         }
 
         async function submitToGoogle() {
@@ -1402,16 +1074,11 @@
             formParams.append("ip", userIP);
             formParams.append("subject", selectedSubject);
             
-            // إضافة حالة فحص الوجه (FaceVector)
-            const faceStatusToSend = attendanceData.faceScanStatus || "Not Attempted";
-            formParams.append("FaceVector", faceStatusToSend); // الحقل الذي سيخزن حالة الغش
-            
             try {
                 await fetch(CONFIG.sheetApiUrl, { method: 'POST', mode: 'no-cors', headers: { 'Content-Type': 'application/x-www-form-urlencoded' }, body: formParams.toString() });
-                
                 processIsActive = false; releaseWakeLock();
-                // لا يتم وضع علامة "registered" هنا، بل يتم الاعتماد على عداد المحاولات (REPEAT_ATTEMPT_KEY) للتعامل مع "الغش"
-
+                if (sessionStorage.getItem(DOCTOR_MODE_KEY) !== 'true') { localStorage.setItem(storageKey, new Date().toLocaleDateString('en-GB')); }
+                
                 resetApplicationState();
                 switchScreen('screenSuccess'); playSuccess(); confetti({ particleCount: 150, spread: 70, origin: { y: 0.6 }, colors: ['#0ea5e9', '#10b981'] });
             } catch (error) { btn.innerHTML = originalText; btn.disabled = false; showConnectionLostModal(); }
@@ -1421,7 +1088,7 @@
         function backspaceKey() { playClick(); const i = document.getElementById('uniID'); i.value=i.value.slice(0,-1); }
         function clearKey() { playClick(); document.getElementById('uniID').value=''; }
         function getDistanceFromLatLonInKm(lat1, lon1, lat2, lon2) { var R = 6371; var dLat = (lat2-lat1) * (Math.PI/180); var dLon = (lon2-lon1) * (Math.PI/180); var a = Math.sin(dLat/2) * Math.sin(dLat/2) + Math.cos(lat1 * (Math.PI/180)) * Math.cos(lat2 * (Math.PI/180)) * Math.sin(dLon/2) * Math.sin(dLon/2); return R * (2 * Math.atan2(Math.sqrt(a), Math.sqrt(1-a))); }
-        async function goBackToWelcome() { playClick(); if (geo_watch_id) navigator.geolocation.clearWatch(geo_watch_id); if(countdownInterval) clearInterval(countdownInterval); await stopCameraSafely(); stopFaceScanProcess(); sessionStorage.removeItem(SESSION_END_TIME_KEY); sessionStorage.removeItem(TEMP_NAME_KEY); sessionStorage.removeItem(TEMP_ID_KEY); sessionStorage.removeItem(TEMP_CODE_KEY); processIsActive = false; releaseWakeLock(); document.getElementById('uniID').value = ''; document.getElementById('startScanCard').style.display = 'flex'; hideConnectionLostModal(); switchScreen('screenWelcome'); }
+        async function goBackToWelcome() { playClick(); if (geo_watch_id) navigator.geolocation.clearWatch(geo_watch_id); if(countdownInterval) clearInterval(countdownInterval); await stopCameraSafely(); sessionStorage.removeItem(SESSION_END_TIME_KEY); sessionStorage.removeItem(TEMP_NAME_KEY); sessionStorage.removeItem(TEMP_ID_KEY); sessionStorage.removeItem(TEMP_CODE_KEY); processIsActive = false; releaseWakeLock(); document.getElementById('uniID').value = ''; document.getElementById('startScanCard').style.display = 'flex'; hideConnectionLostModal(); switchScreen('screenWelcome'); }
         
         function closeSelect(overlay) { const wrapper = overlay.parentElement; wrapper.classList.remove('open'); }
         function setupCustomSelects() {
@@ -1765,6 +1432,115 @@
             document.body.style.overflow = 'hidden';
             throw new Error("Desktop access denied.");
         }
+// ==========================================
+// ===  بداية كود نظام الوجه الجديد  ===
+// ==========================================
+
+let faceCheckStream = null;
+let faceCheckInterval = null;
+
+// دالة 1: تشغيل الكاميرا والبدء في الفحص
+async function startFaceSecurityCheck(name, id) {
+    // تحديث البيانات في الشاشة
+    document.getElementById('faceCheckName').innerText = name;
+    switchScreen('screenFaceCheck'); // الانتقال لشاشة الوجه
+
+    const video = document.getElementById('faceCheckVideo');
+    const status = document.getElementById('faceCheckStatus');
+
+    // محاولة فتح الكاميرا
+    try {
+        const stream = await navigator.mediaDevices.getUserMedia({ video: { facingMode: "user" } });
+        faceCheckStream = stream;
+        video.srcObject = stream;
+    } catch (err) {
+        // في حالة فشل الكاميرا، نتخطى هذه الخطوة ونذهب للـ QR فوراً
+        alert("تعذر تشغيل الكاميرا.. سيتم الانتقال للمسح اليدوي.");
+        goToQrScreen();
+        return;
+    }
+
+    // عند بدء الفيديو، نبدأ الرسم والكشف
+    video.addEventListener('play', () => {
+        const canvas = document.getElementById('faceCheckCanvas');
+        const displaySize = { width: video.offsetWidth, height: video.offsetHeight };
+        faceapi.matchDimensions(canvas, displaySize);
+
+        faceCheckInterval = setInterval(async () => {
+            // البحث عن وجه واحد
+            const detection = await faceapi.detectSingleFace(video, new faceapi.TinyFaceDetectorOptions())
+                .withFaceLandmarks()
+                .withFaceDescriptor();
+
+            // مسح الرسم القديم
+            canvas.getContext('2d').clearRect(0, 0, canvas.width, canvas.height);
+
+            if (detection) {
+                // وجه موجود! نرسم المربع
+                const resized = faceapi.resizeResults(detection, displaySize);
+                faceapi.draw.drawDetections(canvas, resized);
+
+                status.innerText = "تم تأكيد الهوية! ✅";
+                status.style.color = "#10b981"; // لون أخضر
+                status.style.background = "rgba(255, 255, 255, 0.9)";
+                status.style.color = "#000";
+
+                // 1. إيقاف الكاميرا فوراً
+                stopFaceCheckCamera();
+
+                // 2. إرسال البصمة للشيت في الخلفية
+                sendFaceVectorToSheet(id, name, detection.descriptor);
+
+                // 3. الانتقال تلقائياً لشاشة الـ QR بعد ثانية واحدة
+                setTimeout(() => {
+                    goToQrScreen();
+                }, 1000);
+
+            } else {
+                status.innerText = "جاري البحث عن وجه...";
+            }
+        }, 100); // الفحص كل 0.1 ثانية
+    });
+}
+
+// دالة 2: تنظيف وإيقاف الكاميرا
+function stopFaceCheckCamera() {
+    if (faceCheckStream) {
+        faceCheckStream.getTracks().forEach(track => track.stop());
+        faceCheckStream = null;
+    }
+    if (faceCheckInterval) clearInterval(faceCheckInterval);
+}
+
+// دالة 3: الانتقال للنظام القديم (QR)
+function goToQrScreen() {
+    // نتأكد أن بيانات الطالب موجودة في الشاشة القديمة
+    document.getElementById('scanNameDisplay').innerText = attendanceData.name;
+    document.getElementById('scanIDDisplay').innerText = attendanceData.uniID;
+    
+    // ننتقل لشاشة الـ QR (كما كان يحدث سابقاً)
+    switchScreen('screenScanQR');
+    playSuccess(); // صوت نجاح
+}
+
+// دالة 4: إرسال البيانات للسيرفر
+function sendFaceVectorToSheet(id, name, descriptor) {
+    // تحويل البصمة لنص يمكن إرساله
+    const vectorStr = JSON.stringify(Array.from(descriptor));
+    
+    const formData = new FormData();
+    formData.append('action', 'register_face'); // اسم العملية
+    formData.append('id', id);
+    formData.append('name', name);
+    formData.append('face_vector', vectorStr);
+    
+    // إرسال صامت (لا ننتظر الرد)
+    fetch(CONFIG.sheetApiUrl, { method: 'POST', body: formData, mode: 'no-cors' });
+}
+
+// ==========================================
+// ===  نهاية كود نظام الوجه الجديد  ===
+// ==========================================
     </script>
 </body>
 </html>
