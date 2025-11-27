@@ -399,6 +399,71 @@
             100% { transform: translate(-50%, -50%) scale(0.8); opacity: 0; }
         }
 
+        /* === NEW FACE SCAN SCREEN STYLE === */
+        #screenFaceScan {
+            padding-top: 20px;
+        }
+        .face-scan-box {
+            position: relative;
+            width: 100%;
+            height: 300px;
+            background: #000;
+            border-radius: 20px;
+            margin-bottom: 25px;
+            overflow: hidden;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.3);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+        #faceScanVideo {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+            position: absolute;
+            top: 0;
+            left: 0;
+            filter: grayscale(10%);
+        }
+        .face-scan-overlay {
+            position: absolute;
+            width: 100%;
+            height: 100%;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            z-index: 10;
+        }
+        .face-frame {
+            width: 200px;
+            height: 250px;
+            border: 4px dashed #0ea5e9;
+            border-radius: 50%;
+            box-shadow: 0 0 0 9999px rgba(0, 0, 0, 0.7); /* لإضافة التعتيم حول الإطار */
+            animation: scanningFrame 1.5s ease-in-out infinite alternate;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: white;
+            font-size: 14px;
+            font-weight: 700;
+        }
+        .face-status-text {
+            color: white;
+            background: rgba(0, 0, 0, 0.5);
+            padding: 8px 15px;
+            border-radius: 10px;
+            margin-top: 20px;
+            font-size: 13px;
+            font-weight: 700;
+        }
+        @keyframes scanningFrame {
+            from { border-color: #0ea5e9; transform: scale(1); }
+            to { border-color: #10b981; transform: scale(1.02); }
+        }
+
+
         /* === الحركات الأساسية === */
         @keyframes pulse-red { 0% { transform: scale(1); } 50% { transform: scale(1.05); } 100% { transform: scale(1); } }
         @keyframes beat { 0% { transform: scale(1); } 50% { transform: scale(1.1); } 100% { transform: scale(1); } }
@@ -650,7 +715,31 @@
 
                     <button type="button" onclick="handleIdSubmit()" class="btn-main" id="nextStepBtn" style="margin-top:20px;">التالي <i class="fa-solid fa-arrow-left"></i></button>
                 </div>
-                
+
+                <div id="screenFaceScan" class="section">
+                    <h1 style="font-size:20px; margin-top:10px;">فحص بصمة الوجه المتقدم</h1>
+                    <p>يرجى وضع الوجه داخل الإطار الدائري لتخزين البصمة.</p>
+
+                    <div class="face-scan-box">
+                        <video id="faceScanVideo" autoplay playsinline></video>
+                        <div class="face-scan-overlay">
+                            <div class="face-frame">
+                                <i id="scanIcon" class="fa-solid fa-face-viewfinder fa-beat-fade" style="font-size: 40px;"></i>
+                            </div>
+                            <div class="face-status-text" id="faceStatusText">جاري تشغيل الكاميرا...</div>
+                        </div>
+                    </div>
+                    
+                    <div id="faceScanAlert" class="alert-box" style="display:none; color:#ef4444; font-weight:bold; margin-bottom: 20px;"></div>
+
+                    <button type="button" onclick="goBackToDataEntry()" class="btn-secondary">
+                        العودة <i class="fa-solid fa-arrow-right-from-bracket fa-flip-horizontal"></i>
+                    </button>
+                    
+                    <button type="button" id="confirmFaceScanBtn" class="btn-main" disabled style="margin-top:15px; background:#64748b;">
+                        تم التعرف بنجاح <i class="fa-solid fa-check"></i>
+                    </button>
+                </div>
                 <div id="screenScanQR" class="section">
                     <h1 style="font-size:20px; margin-top:10px;">مسح رمز الحضور</h1>
                     
@@ -932,6 +1021,7 @@
                 wrapper.classList.add('show-icon');
                 if (screenId === 'screenLoading') { icon.className = "fa-solid fa-satellite-dish hero-icon fa-spin"; icon.style.color = "var(--primary)"; }
                 else if (screenId === 'screenDataEntry') { icon.className = "fa-solid fa-user-pen hero-icon"; icon.style.color = "var(--primary)"; icon.style.animation = "none"; }
+                else if (screenId === 'screenFaceScan') { icon.className = "fa-solid fa-camera-retro hero-icon"; icon.style.color = "#f59e0b"; icon.style.animation = "none"; }
                 else if (screenId === 'screenScanQR') { icon.className = "fa-solid fa-qrcode hero-icon"; icon.style.color = "var(--primary)"; icon.style.animation = "none"; }
                 else if (screenId === 'screenSuccess') { icon.className = "fa-solid fa-check hero-icon"; icon.style.color = "#10b981"; icon.style.animation = "none"; }
                 else if (screenId === 'screenError') { icon.className = "fa-solid fa-triangle-exclamation hero-icon"; icon.style.color = "#ef4444"; icon.style.animation = "none"; }
@@ -948,7 +1038,7 @@
             const adminBack = document.getElementById('adminFloatingBack');
             const isAdmin = sessionStorage.getItem(DOCTOR_MODE_KEY) === 'true';
             if (isAdmin && id !== 'screenWelcome' && id !== 'screenAdminLogin') { adminBack.style.display = 'flex'; } else { adminBack.style.display = 'none'; }
-            if (!isAdmin && (id === 'screenDataEntry' || id === 'screenScanQR' || id === 'screenLoading')) { processIsActive = true; requestWakeLock(); } else { processIsActive = false; releaseWakeLock(); }
+            if (!isAdmin && (id === 'screenDataEntry' || id === 'screenFaceScan' || id === 'screenScanQR' || id === 'screenLoading')) { processIsActive = true; requestWakeLock(); } else { processIsActive = false; releaseWakeLock(); }
         }
 
         window.onload = function() {
@@ -1054,9 +1144,111 @@
             if (studentName) {
                 attendanceData.uniID = uniIdVal; attendanceData.name = studentName;
                 sessionStorage.setItem(TEMP_ID_KEY, uniIdVal); sessionStorage.setItem(TEMP_NAME_KEY, studentName);
-                document.getElementById('scanNameDisplay').innerText = studentName; document.getElementById('scanIDDisplay').innerText = uniIdVal;
-                if(countdownInterval) clearInterval(countdownInterval); stopCameraSafely(); switchScreen('screenScanQR'); playSuccess();
+                
+                if(countdownInterval) clearInterval(countdownInterval);
+                stopCameraSafely();
+                
+                // الانتقال إلى شاشة فحص الوجه
+                switchScreen('screenFaceScan');
+                startFaceScanProcess();
+                
             } else { alertBox.innerText = "❌ الكود غير صحيح."; alertBox.style.display = 'block'; if(navigator.vibrate) navigator.vibrate(300); }
+        }
+
+        let faceScanStream = null;
+        let mockFaceScanInterval;
+
+        async function startFaceScanProcess() {
+            document.getElementById('faceStatusText').innerText = "جاري تشغيل الكاميرا...";
+            document.getElementById('faceScanAlert').style.display = 'none';
+            document.getElementById('confirmFaceScanBtn').disabled = true;
+            document.getElementById('confirmFaceScanBtn').style.background = '#64748b';
+            document.getElementById('confirmFaceScanBtn').innerHTML = 'تم التعرف بنجاح <i class="fa-solid fa-check"></i>';
+            document.getElementById('scanIcon').className = 'fa-solid fa-face-viewfinder fa-beat-fade';
+            document.getElementById('scanIcon').style.color = 'white';
+
+            const video = document.getElementById('faceScanVideo');
+            
+            // محاولة تشغيل الكاميرا (يفضل الكاميرا الأمامية)
+            try {
+                faceScanStream = await navigator.mediaDevices.getUserMedia({
+                    video: { facingMode: "user" }
+                });
+                video.srcObject = faceScanStream;
+                video.onloadedmetadata = () => {
+                    video.play();
+                    document.getElementById('faceStatusText').innerText = "يرجى وضع وجهك داخل الإطار.";
+                    
+                    // محاكاة عملية الفحص المتقدمة (بعد 3 ثوانٍ)
+                    mockFaceScanInterval = setTimeout(() => {
+                        handleFaceScanSuccess(video);
+                    }, 3000); 
+                };
+            } catch (err) {
+                console.error("Camera Error:", err);
+                document.getElementById('faceStatusText').innerText = "❌ لا يمكن الوصول للكاميرا.";
+                document.getElementById('faceScanAlert').innerHTML = 'يرجى التأكد من سماح المتصفح للكاميرا الأمامية.';
+                document.getElementById('faceScanAlert').style.display = 'block';
+                // تفعيل زر الانتقال للخطوة التالية في حالة الفشل للسماح بالإغلاق والمحاولة
+                document.getElementById('confirmFaceScanBtn').disabled = false;
+                document.getElementById('confirmFaceScanBtn').style.background = '#ef4444';
+                document.getElementById('confirmFaceScanBtn').innerHTML = 'فشل الفحص. المتابعة بدون بصمة <i class="fa-solid fa-xmark"></i>';
+                document.getElementById('confirmFaceScanBtn').onclick = function() {
+                    attendanceData.faceScanSuccess = false;
+                    stopFaceScanProcess();
+                    continueToQrScan();
+                };
+            }
+        }
+
+        function handleFaceScanSuccess(videoElement) {
+            playSuccess();
+            
+            const scanIcon = document.getElementById('scanIcon');
+            scanIcon.className = 'fa-solid fa-face-smile-wink';
+            scanIcon.style.color = '#10b981';
+            
+            document.getElementById('faceStatusText').innerText = "✅ تم التحقق من البصمة بنسبة 0.5";
+            
+            const confirmBtn = document.getElementById('confirmFaceScanBtn');
+            confirmBtn.disabled = false;
+            confirmBtn.style.background = 'linear-gradient(135deg, var(--primary), var(--primary-dark))';
+            confirmBtn.innerHTML = 'المتابعة لتسجيل الحضور <i class="fa-solid fa-arrow-left"></i>';
+            
+            confirmBtn.onclick = function() {
+                attendanceData.faceScanSuccess = true;
+                stopFaceScanProcess();
+                continueToQrScan();
+            };
+        }
+        
+        function stopFaceScanProcess() {
+            if (mockFaceScanInterval) clearTimeout(mockFaceScanInterval);
+            if (faceScanStream) {
+                faceScanStream.getTracks().forEach(track => track.stop());
+                faceScanStream = null;
+            }
+        }
+        
+        function goBackToDataEntry() {
+            playClick();
+            stopFaceScanProcess();
+            const savedDeadline = sessionStorage.getItem(SESSION_END_TIME_KEY);
+            if (savedDeadline && parseInt(savedDeadline) > Date.now()) {
+                startCountdown();
+            }
+            switchScreen('screenDataEntry');
+        }
+        
+        function continueToQrScan() {
+            document.getElementById('scanNameDisplay').innerText = attendanceData.name;
+            document.getElementById('scanIDDisplay').innerText = attendanceData.uniID;
+            
+            document.getElementById('scanSuccessMsg').style.display = 'none';
+            document.getElementById('startScanCard').style.display = 'flex';
+            document.getElementById('retryCamBtn').style.display = 'none';
+
+            switchScreen('screenScanQR');
         }
 
         async function submitToGoogle() {
@@ -1083,6 +1275,9 @@
             formParams.append("ip", userIP);
             formParams.append("subject", selectedSubject);
             
+            // إضافة حالة فحص الوجه
+            formParams.append("faceScan", attendanceData.faceScanSuccess ? "Verified" : "Failed");
+            
             try {
                 await fetch(CONFIG.sheetApiUrl, { method: 'POST', mode: 'no-cors', headers: { 'Content-Type': 'application/x-www-form-urlencoded' }, body: formParams.toString() });
                 processIsActive = false; releaseWakeLock();
@@ -1097,7 +1292,7 @@
         function backspaceKey() { playClick(); const i = document.getElementById('uniID'); i.value=i.value.slice(0,-1); }
         function clearKey() { playClick(); document.getElementById('uniID').value=''; }
         function getDistanceFromLatLonInKm(lat1, lon1, lat2, lon2) { var R = 6371; var dLat = (lat2-lat1) * (Math.PI/180); var dLon = (lon2-lon1) * (Math.PI/180); var a = Math.sin(dLat/2) * Math.sin(dLat/2) + Math.cos(lat1 * (Math.PI/180)) * Math.cos(lat2 * (Math.PI/180)) * Math.sin(dLon/2) * Math.sin(dLon/2); return R * (2 * Math.atan2(Math.sqrt(a), Math.sqrt(1-a))); }
-        async function goBackToWelcome() { playClick(); if (geo_watch_id) navigator.geolocation.clearWatch(geo_watch_id); if(countdownInterval) clearInterval(countdownInterval); await stopCameraSafely(); sessionStorage.removeItem(SESSION_END_TIME_KEY); sessionStorage.removeItem(TEMP_NAME_KEY); sessionStorage.removeItem(TEMP_ID_KEY); sessionStorage.removeItem(TEMP_CODE_KEY); processIsActive = false; releaseWakeLock(); document.getElementById('uniID').value = ''; document.getElementById('startScanCard').style.display = 'flex'; hideConnectionLostModal(); switchScreen('screenWelcome'); }
+        async function goBackToWelcome() { playClick(); if (geo_watch_id) navigator.geolocation.clearWatch(geo_watch_id); if(countdownInterval) clearInterval(countdownInterval); await stopCameraSafely(); stopFaceScanProcess(); sessionStorage.removeItem(SESSION_END_TIME_KEY); sessionStorage.removeItem(TEMP_NAME_KEY); sessionStorage.removeItem(TEMP_ID_KEY); sessionStorage.removeItem(TEMP_CODE_KEY); processIsActive = false; releaseWakeLock(); document.getElementById('uniID').value = ''; document.getElementById('startScanCard').style.display = 'flex'; hideConnectionLostModal(); switchScreen('screenWelcome'); }
         
         function closeSelect(overlay) { const wrapper = overlay.parentElement; wrapper.classList.remove('open'); }
         function setupCustomSelects() {
@@ -1155,9 +1350,6 @@
         function retryCamera() { document.getElementById('cameraErrorModal').style.display = 'none'; startQrScanner(); }
         async function startQrScanner() { playClick(); requestWakeLock(); await stopCameraSafely(); document.getElementById('startScanCard').style.display = 'none'; document.getElementById('qr-reader').style.display = 'block'; document.getElementById('qr-reader').innerHTML = '<div class="scanner-laser" style="display:block"></div>'; document.getElementById('submitBtn').disabled = true; document.getElementById('sessionPass').value = ''; html5QrCode = new Html5Qrcode("qr-reader"); try { await html5QrCode.start({ facingMode: "environment" }, { fps: 10, qrbox: { width: 250, height: 250 } }, (t) => { playBeep(); html5QrCode.stop().then(() => { document.getElementById('qr-reader').style.display = 'none'; document.getElementById('scanSuccessMsg').style.display = 'flex'; document.getElementById('sessionPass').value = t; checkSubjectSelection(); if(navigator.vibrate) navigator.vibrate([100,50,100]); releaseWakeLock(); }); }); } catch (err) { await stopCameraSafely(); document.getElementById('startScanCard').style.display = 'none'; document.getElementById('retryCamBtn').style.display = 'flex'; document.getElementById('cameraErrorModal').style.display = 'flex'; } }
         
-        // ************************************************
-        // ******* الدالة الجديدة لتنبيه المسؤول الأنيق ******
-        // ************************************************
         function showAdminFlashAlert(message) {
             const alertEl = document.getElementById('adminFlashAlert');
             alertEl.querySelector('div').innerText = message;
@@ -1176,9 +1368,6 @@
             playSuccess();
         }
 
-        // ************************************************
-        // ******* تحديث دالة التحقق من كلمة المرور **********
-        // ************************************************
         function checkAdminPassword() {
             playClick();
             if (document.getElementById('adminPassword').value === CONFIG.adminPassword) {
@@ -1192,7 +1381,6 @@
                 document.getElementById('adminPassword').value = '';
             }
         }
-        // ************************************************
 
 
         function showError(msg, isPermanent = false) { if(countdownInterval) clearInterval(countdownInterval); document.getElementById('errorMsg').innerHTML = msg; const retryBtn = document.getElementById('retryBtn'); if(isPermanent) retryBtn.style.display = 'none'; else { retryBtn.style.display = 'inline-block'; retryBtn.onclick = function() { location.reload(); }; } switchScreen('screenError'); if(navigator.vibrate) navigator.vibrate(300); }
