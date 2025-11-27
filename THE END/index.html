@@ -1511,7 +1511,6 @@ function stopFaceCheckCamera() {
     }
     if (faceCheckInterval) clearInterval(faceCheckInterval);
 }
-
 // دالة 3: الانتقال للنظام القديم (QR)
 function goToQrScreen() {
     // نتأكد أن بيانات الطالب موجودة في الشاشة القديمة
@@ -1541,6 +1540,16 @@ function sendFaceVectorToSheet(id, name, descriptor) {
 // ==========================================
 // ===  نهاية كود نظام الوجه الجديد  ===
 // ==========================================
-    </script>
+
+// تسجيل الـ Service Worker ليعمل النظام بدون إنترنت
+if ('serviceWorker' in navigator) {
+    window.addEventListener('load', () => {
+        navigator.serviceWorker.register('./sw.js')
+            .then(reg => console.log('Service Worker Registered! ✅', reg.scope))
+            .catch(err => console.log('Service Worker Failed ❌', err));
+    });
+}
+
+</script>
 </body>
 </html>
