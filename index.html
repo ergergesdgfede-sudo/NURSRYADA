@@ -364,7 +364,7 @@
             font-weight: 700;
         }
 
-        /* === NEW FLASH ALERT STYLE (FOR ADMIN LOGIN) - التعديل المطلوب === */
+        /* === NEW FLASH ALERT STYLE (FOR ADMIN LOGIN) === */
         #adminFlashAlert {
             position: fixed; top: 50%; left: 50%; transform: translate(-50%, -50%);
             background: linear-gradient(135deg, #10b981, #059669); /* لون أخضر أنيق */
@@ -511,8 +511,8 @@
     </div>
     <div id="attemptAlertModal" class="modal-overlay">
         <div class="modal-box" style="max-width: 350px;">
-            <i id="attemptIcon" class="fa-solid fa-triangle-exclamation" style="font-size: 40px; color: var(--warning); margin-bottom: 15px;"></i>
-            <div class="modal-title" id="attemptTitle">تم التعرف على الوجه للمرة الأولى</div>
+            <i id="attemptIcon" class="fa-solid fa-check" style="font-size: 40px; color: var(--success); margin-bottom: 15px;"></i>
+            <div class="modal-title" id="attemptTitle">تم التعرف على الوجه</div>
             <div class="modal-text" id="attemptText">جاري تسجيل محاولة الحضور.</div>
             <div class="modal-actions">
                 <button onclick="closeAttemptModal()" class="modal-btn btn-success-modal" style="background: var(--primary);">متابعة</button>
@@ -826,7 +826,6 @@
                         <div class="custom-options-overlay" onclick="closeSelect(this)"></div>
                         <div class="custom-options">
                             <div class="sheet-handle"></div>
-                            <div class="options-title">اختر المادة الدراسية</div>
                             <div id="subjectOptionsContainer"></div>
                         </div>
                         <select id="subjectSelect" style="display:none;" onchange="checkSubjectSelection()">
@@ -1219,15 +1218,25 @@
             const uniID = attendanceData.uniID;
             faceAttemptCount = parseInt(localStorage.getItem(REPEAT_ATTEMPT_KEY(uniID)) || "0");
             
-            document.getElementById('faceScanBox').classList.remove('success', 'fail', 'warning');
-            document.getElementById('faceFrame').classList.remove('success-glow');
-            document.getElementById('faceStatusText').innerText = "جاري تشغيل الكاميرا...";
+            const box = document.getElementById('faceScanBox');
+            const frame = document.getElementById('faceFrame');
+            const statusText = document.getElementById('faceStatusText');
+            const confirmBtn = document.getElementById('confirmFaceScanBtn');
+            const scanIcon = document.getElementById('scanIcon');
+
+            box.classList.remove('success', 'fail', 'warning');
+            frame.classList.remove('success-glow');
+            frame.style.animation = 'scanningFrame 1.5s ease-in-out infinite alternate';
+
+            statusText.innerText = "جاري تشغيل الكاميرا...";
             document.getElementById('faceScanAlert').style.display = 'none';
-            document.getElementById('confirmFaceScanBtn').disabled = true;
-            document.getElementById('confirmFaceScanBtn').style.background = '#64748b';
-            document.getElementById('confirmFaceScanBtn').innerHTML = 'المتابعة (لم يتم التعرف) <i class="fa-solid fa-xmark"></i>';
-            document.getElementById('scanIcon').className = 'fa-solid fa-face-viewfinder fa-beat-fade';
-            document.getElementById('scanIcon').style.color = 'white';
+            confirmBtn.disabled = true;
+            confirmBtn.style.background = '#64748b';
+            confirmBtn.innerHTML = 'المتابعة (لم يتم التعرف) <i class="fa-solid fa-xmark"></i>';
+            scanIcon.className = 'fa-solid fa-face-viewfinder fa-beat-fade';
+            scanIcon.style.color = 'white';
+            statusText.style.backgroundColor = 'rgba(14, 165, 233, 0.8)';
+            
             document.getElementById('faceTimer').innerText = '';
             document.getElementById('faceTimer').style.opacity = '1';
             document.getElementById('faceScanInstruction').innerText = 'المرحلة 1/2: ثبات الوجه داخل الإطار لمدة 3 ثواني...';
@@ -1241,7 +1250,7 @@
                 video.srcObject = faceScanStream;
                 video.onloadedmetadata = () => {
                     video.play();
-                    document.getElementById('faceStatusText').innerText = "تم الاتصال بالشبكة الأمنية. يرجى الثبات.";
+                    statusText.innerText = "تم الاتصال بالشبكة الأمنية. يرجى الثبات.";
                     playBeep();
 
                     // المرحلة 1: الثبات لمدة 3 ثواني
@@ -1259,15 +1268,15 @@
             } catch (err) {
                 console.error("Camera Error:", err);
                 // في حالة فشل الكاميرا
-                document.getElementById('faceScanBox').classList.add('fail');
-                document.getElementById('faceStatusText').innerText = "❌ فشل تشغيل الكاميرا (فشل نظام الذكاء الاصطناعي)";
+                box.classList.add('fail');
+                statusText.innerText = "❌ فشل تشغيل الكاميرا (فشل نظام الذكاء الاصطناعي)";
                 document.getElementById('faceScanAlert').innerHTML = 'يرجى التأكد من سماح المتصفح للكاميرا الأمامية.';
                 document.getElementById('faceScanAlert').style.display = 'block';
                 
-                document.getElementById('confirmFaceScanBtn').disabled = false;
-                document.getElementById('confirmFaceScanBtn').style.background = '#ef4444';
-                document.getElementById('confirmFaceScanBtn').innerHTML = 'فشل الفحص. المتابعة بدون بصمة <i class="fa-solid fa-ban"></i>';
-                document.getElementById('confirmFaceScanBtn').onclick = function() {
+                confirmBtn.disabled = false;
+                confirmBtn.style.background = '#ef4444';
+                confirmBtn.innerHTML = 'فشل الفحص. المتابعة بدون بصمة <i class="fa-solid fa-ban"></i>';
+                confirmBtn.onclick = function() {
                     attendanceData.faceScanStatus = "Denied (Camera)";
                     stopFaceScanProcess();
                     continueToQrScan();
@@ -1277,12 +1286,13 @@
 
         function startRotationCheck() {
             document.getElementById('faceScanInstruction').innerText = 'المرحلة 2/2: يرجى النظر لليسار ببطء ثم العودة للإطار (3 ثوان).';
-            document.getElementById('faceStatusText').style.backgroundColor = 'var(--warning)';
-            document.getElementById('faceStatusText').innerText = "جاري التحقق من الحركة. انظر لليسار ببطء الآن.";
+            const statusText = document.getElementById('faceStatusText');
+            statusText.style.backgroundColor = 'var(--warning)';
+            statusText.innerText = "انظر لليسار ببطء. لا تضحك. ابق طبيعياً.";
             document.getElementById('faceTimer').style.opacity = '0';
             document.getElementById('faceFrame').style.animation = 'none'; // إيقاف الرسوم المتحركة الأساسية
             document.getElementById('faceScanBox').classList.add('warning');
-            document.getElementById('scanIcon').className = 'fa-solid fa-arrow-left-long fa-bounce';
+            document.getElementById('scanIcon').className = 'fa-solid fa-arrow-right-long fa-bounce';
             playBeep();
             
             // محاكاة عملية التحقق من الحركة (بعد 3 ثوانٍ)
@@ -1310,7 +1320,6 @@
             icon.classList.remove('fa-beat-fade', 'fa-bounce');
             
             statusText.style.backgroundColor = 'var(--success)';
-            statusText.innerText = `✅ تم تخزين FaceVector بدقة 0.6`;
             
             confirmBtn.disabled = false;
             confirmBtn.style.background = 'linear-gradient(135deg, var(--success), #059669)';
@@ -1323,20 +1332,12 @@
             // تحديد رسالة الإبلاغ
             if (faceAttemptCount === 1) {
                 attendanceData.faceScanStatus = `First Attempt - FaceVector 0.6`;
-                showAttemptModal(
-                    "تم التعرف على الوجه للمرة الأولى",
-                    `تم تسجيل بصمتك بنجاح يا ${attendanceData.name}.`,
-                    'fa-solid fa-check',
-                    'var(--success)'
-                );
+                statusText.innerText = `✅ تم التعرف على الوجه للمرة الأولى - FaceVector 0.6`;
+                document.getElementById('faceScanInstruction').innerText = `تم التعرف عليك يا ${attendanceData.name} للمرة الأولى.`;
             } else {
                 attendanceData.faceScanStatus = `CHEATING/REPEAT - Attempt #${faceAttemptCount} - FaceVector 0.6`;
-                showAttemptModal(
-                    "⚠️ محاولة تسجيل مكررة (غش)",
-                    `تم التعرف عليك يا ${attendanceData.name} للمرة **الثانية** في نفس اليوم.<br> جاري الإبلاغ عن المحاولة المكررة ولكن سيتم السماح لك بالتسجيل.`,
-                    'fa-solid fa-user-tag',
-                    'var(--danger)'
-                );
+                statusText.innerText = `⚠️ تم التعرف على الوجه للمرة الثانية في نفس اليوم وجاري الإبلاغ`;
+                document.getElementById('faceScanInstruction').innerText = `⚠️ تم التعرف على الوجه للمرة الثانية في نفس اليوم وجاري الإبلاغ`;
             }
             
             confirmBtn.onclick = function() {
