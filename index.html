@@ -1,7 +1,6 @@
 <!DOCTYPE html>
 <html dir="rtl" lang="ar">
 <head>
-<script src="face-api.min.js"></script>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
     <title>نظام كشف الحضور المطور - كلية التمريض</title>
@@ -19,11 +18,10 @@
     
     <link href="https://fonts.googleapis.com/css2?family=Cairo:wght@400;600;700;900&family=Outfit:wght@500;700&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    
     <script src="https://unpkg.com/html5-qrcode" type="text/javascript"></script>
-
-    <style>
+    <script src="face-api.min.js"></script> <style>
         /* === الأساسيات === */
-        /* تصميم جديد لمنع الدخول */
         #desktop-blocker { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: #0f172a; color: #ef4444; z-index: 99999; display: none; flex-direction: column; align-items: center; justify-content: center; text-align: center; font-family: 'Cairo'; }
         :root { --primary: #0ea5e9; --primary-dark: #0284c7; --text-main: #1e293b; --text-sub: #64748b; --glass-bg: rgba(255, 255, 255, 0.95); --danger: #ef4444; --success: #10b981; --warning: #f59e0b; }
         * { box-sizing: border-box; margin: 0; padding: 0; -webkit-tap-highlight-color: transparent; }
@@ -58,6 +56,7 @@
 
         .btn-secondary { background: #ffffff; color: var(--primary-dark); width: 100%; padding: 12px; border-radius: 14px; font-size: 14px; font-weight: 700; border: 2px solid #e0f2fe; cursor: pointer; font-family: 'Cairo'; margin-top: 10px; box-shadow: 0 2px 5px -2px rgba(0, 0, 0, 0.1); transition: 0.3s; position: relative; z-index: 5; }
         
+        /* باقي التنسيقات كما هي... */
         .admin-controls-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; margin-top: 10px; }
         .admin-sub-btn { border-radius: 18px; padding: 12px 10px; font-size: 12px; font-weight: 800; border: none; cursor: pointer; font-family: 'Cairo'; transition: all 0.2s; display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 6px; box-shadow: 0 4px 10px rgba(0, 0, 0, 0.03); height: 85px; }
         .admin-sub-btn:active { transform: scale(0.95); }
@@ -71,123 +70,43 @@
         .sub-btn-icon { font-size: 20px; margin-bottom: 2px; }
         .btn-exams .sub-btn-icon, .btn-refresh .sub-btn-icon { margin-bottom: 0; font-size: 18px; }
 
-        /* === تصميم السجل التفاعلي الجديد (Modal) === */
-        #reportModal .modal-box {
-            max-width: 400px; height: 85vh; padding: 0; background: #f8fafc;
-            display: flex; flex-direction: column; overflow: hidden;
-        }
-
-        .report-modal-header {
-            padding: 15px 20px; background: white; border-bottom: 1px solid #e2e8f0;
-            display: flex; justify-content: space-between; align-items: center;
-            flex-shrink: 0; z-index: 20;
-        }
-
+        /* Report Modal Styles */
+        #reportModal .modal-box { max-width: 400px; height: 85vh; padding: 0; background: #f8fafc; display: flex; flex-direction: column; overflow: hidden; }
+        .report-modal-header { padding: 15px 20px; background: white; border-bottom: 1px solid #e2e8f0; display: flex; justify-content: space-between; align-items: center; flex-shrink: 0; z-index: 20; }
         .report-modal-footer { padding: 15px 20px; background: white; border-top: 1px solid #e2e8f0; z-index: 10; }
-
-        /* زر الحذف الأيقونة فقط */
-        .btn-icon-danger {
-            width: 40px; height: 40px; border-radius: 50%; border: none;
-            background: #fee2e2; color: #ef4444; font-size: 16px;
-            display: flex; align-items: center; justify-content: center;
-            cursor: pointer; transition: 0.2s;
-        }
+        .btn-icon-danger { width: 40px; height: 40px; border-radius: 50%; border: none; background: #fee2e2; color: #ef4444; font-size: 16px; display: flex; align-items: center; justify-content: center; cursor: pointer; transition: 0.2s; }
         .btn-icon-danger:hover { background: #ef4444; color: white; transform: rotate(15deg); }
-
-        /* حاوية المحتوى المتحركة */
-        .report-views-container {
-            flex: 1; position: relative; overflow: hidden; width: 100%;
-        }
-        .report-view {
-            position: absolute; top: 0; left: 0; width: 100%; height: 100%;
-            overflow-y: auto; padding: 15px;
-            transition: transform 0.3s cubic-bezier(0.4, 0.0, 0.2, 1);
-            background: #f8fafc;
-        }
-
-        /* فيو 1: كروت المواد */
+        .report-views-container { flex: 1; position: relative; overflow: hidden; width: 100%; }
+        .report-view { position: absolute; top: 0; left: 0; width: 100%; height: 100%; overflow-y: auto; padding: 15px; transition: transform 0.3s cubic-bezier(0.4, 0.0, 0.2, 1); background: #f8fafc; }
         #viewSubjects { transform: translateX(0); z-index: 10; }
         #viewStudents { transform: translateX(-100%); z-index: 20; background: #f8fafc; }
-
-        /* كلاسات التحريك */
         .slide-out { transform: translateX(100%) !important; }
         .slide-in { transform: translateX(0) !important; }
-
-        /* تصميم كارت المادة الكبير */
-        .subject-big-card {
-            background: white; border-radius: 20px; padding: 20px;
-            margin-bottom: 15px; cursor: pointer;
-            border: 1px solid #e2e8f0; box-shadow: 0 10px 25px -5px rgba(0, 0, 0, 0.05);
-            display: flex; align-items: center; justify-content: space-between;
-            transition: 0.2s; position: relative; overflow: hidden;
-        }
+        .subject-big-card { background: white; border-radius: 20px; padding: 20px; margin-bottom: 15px; cursor: pointer; border: 1px solid #e2e8f0; box-shadow: 0 10px 25px -5px rgba(0, 0, 0, 0.05); display: flex; align-items: center; justify-content: space-between; transition: 0.2s; position: relative; overflow: hidden; }
         .subject-big-card:active { transform: scale(0.98); background: #f0f9ff; }
-        .subject-big-card::before {
-            content: ''; position: absolute; left: 0; top: 0; bottom: 0; width: 6px;
-            background: var(--primary); border-radius: 4px 0 0 4px;
-        }
+        .subject-big-card::before { content: ''; position: absolute; left: 0; top: 0; bottom: 0; width: 6px; background: var(--primary); border-radius: 4px 0 0 4px; }
         .sub-card-info h3 { font-size: 16px; font-weight: 800; color: #1e293b; margin-bottom: 5px; }
         .sub-card-info span { font-size: 12px; color: #64748b; font-weight: 600; }
         .sub-arrow { width: 40px; height: 40px; background: #f1f5f9; border-radius: 50%; display: flex; align-items: center; justify-content: center; color: var(--primary); }
-
-        /* هيدر قائمة الطلاب */
-        .students-list-header {
-            display: flex; align-items: center; gap: 10px; margin-bottom: 15px;
-            background: white; padding: 10px; border-radius: 12px; border: 1px solid #e2e8f0;
-        }
-        .btn-back-report {
-            width: 35px; height: 35px; border-radius: 10px; border: none;
-            background: #f1f5f9; color: #475569; cursor: pointer;
-            display: flex; align-items: center; justify-content: center;
-        }
-
-        /* كارت الطالب المحدث بالوقت واليوم */
-        .student-detailed-card {
-            background: white; border-radius: 14px; padding: 15px;
-            margin-bottom: 10px; border: 1px solid #f1f5f9;
-            box-shadow: 0 4px 10px rgba(0, 0, 0, 0.03); display: flex;
-            justify-content: space-between; align-items: center;
-        }
+        .students-list-header { display: flex; align-items: center; gap: 10px; margin-bottom: 15px; background: white; padding: 10px; border-radius: 12px; border: 1px solid #e2e8f0; }
+        .btn-back-report { width: 35px; height: 35px; border-radius: 10px; border: none; background: #f1f5f9; color: #475569; cursor: pointer; display: flex; align-items: center; justify-content: center; }
+        .student-detailed-card { background: white; border-radius: 14px; padding: 15px; margin-bottom: 10px; border: 1px solid #f1f5f9; box-shadow: 0 4px 10px rgba(0, 0, 0, 0.03); display: flex; justify-content: space-between; align-items: center; }
         .st-data-col { display: flex; flex-direction: column; gap: 4px; text-align: right; }
         .st-name { font-weight: 800; font-size: 13px; color: #1e293b; }
-        .std-time-badge {
-            background: #ecfdf5; color: #059669; padding: 4px 8px; border-radius: 6px;
-            font-size: 11px; font-weight: 800; display: inline-flex; align-items: center; gap: 4px;
-            margin-top: 5px;
-        }
-        .btn-delete-item {
-            width: 38px; height: 38px;
-            background: #fff1f2; color: #f43f5e;
-            border: none; border-radius: 12px;
-            display: flex; align-items: center; justify-content: center;
-            cursor: pointer; transition: all 0.2s; font-size: 14px; flex-shrink: 0; margin-right: 10px;
-        }
+        .std-time-badge { background: #ecfdf5; color: #059669; padding: 4px 8px; border-radius: 6px; font-size: 11px; font-weight: 800; display: inline-flex; align-items: center; gap: 4px; margin-top: 5px; }
+        .btn-delete-item { width: 38px; height: 38px; background: #fff1f2; color: #f43f5e; border: none; border-radius: 12px; display: flex; align-items: center; justify-content: center; cursor: pointer; transition: all 0.2s; font-size: 14px; flex-shrink: 0; margin-right: 10px; }
         .btn-delete-item:active { transform: scale(0.9); background: #f43f5e; color: white; }
-        
-        /* أزرار الفوتر الجديدة */
-        .btn-refresh-list {
-            background: linear-gradient(135deg, #0ea5e9, #0284c7); color: white; width: 100%; padding: 14px;
-            border-radius: 16px; font-weight: 800; border: none; cursor: pointer; font-family: 'Cairo';
-            box-shadow: 0 4px 15px rgba(14, 165, 233, 0.3); display: flex; align-items: center; justify-content: center; gap: 8px; font-size: 14px;
-        }
+        .btn-refresh-list { background: linear-gradient(135deg, #0ea5e9, #0284c7); color: white; width: 100%; padding: 14px; border-radius: 16px; font-weight: 800; border: none; cursor: pointer; font-family: 'Cairo'; box-shadow: 0 4px 15px rgba(14, 165, 233, 0.3); display: flex; align-items: center; justify-content: center; gap: 8px; font-size: 14px; }
         .btn-refresh-list:active { transform: scale(0.98); }
-        .btn-close-stylish {
-            background: #f1f5f9; color: #475569; width: 100%; padding: 12px;
-            border-radius: 16px; font-weight: 700; border: 1px solid #e2e8f0; cursor: pointer; font-family: 'Cairo'; font-size: 13px;
-        }
+        .btn-close-stylish { background: #f1f5f9; color: #475569; width: 100%; padding: 12px; border-radius: 16px; font-weight: 700; border: 1px solid #e2e8f0; cursor: pointer; font-family: 'Cairo'; font-size: 13px; }
 
-
-        /* Other Modals */
+        /* Other Modals & Inputs */
         #examModal .modal-box { border: 2px solid #ddd6fe; background: #ffffff; }
         .exam-loader { width: 50px; height: 50px; border: 5px solid #f3f3f3; border-top: 5px solid #7c3aed; border-radius: 50%; animation: spin 1s linear infinite; margin: 0 auto 15px auto; }
-        @keyframes spin { 0% { transform: rotate(0deg); } 100% { transform: rotate(360deg); } }
-
-        /* Inputs & Selects */
         .input-group { margin-bottom: 15px; text-align: right; position: relative; z-index: 5; }
         .modern-input { width: 100%; padding: 12px 15px; border: 2px solid #e2e8f0; border-radius: 12px; font-family: 'Cairo'; font-size: 14px; outline: none; transition: 0.3s; background: #f8fafc; }
         .modern-input:focus { border-color: var(--primary); background: white; }
         .modern-input.locked { background: #f1f5f9; color: #64748b; text-align: center; font-weight: bold; cursor: not-allowed; letter-spacing: 1px; }
-        
         .custom-select-wrapper { position: relative; user-select: none; width: 100%; margin-bottom: 20px; -webkit-tap-highlight-color: transparent; }
         .custom-select-label { display: block; text-align: right; margin-bottom: 8px; font-size: 13px; color: #475569; font-weight: 800; margin-right: 5px; }
         .custom-select-trigger { position: relative; display: flex; align-items: center; justify-content: space-between; width: 100%; padding: 18px 20px; font-size: 15px; font-weight: 700; color: #334155; background: #ffffff; border: 1px solid #e2e8f0; border-radius: 20px; cursor: pointer; transition: all 0.3s cubic-bezier(0.25, 0.8, 0.25, 1); box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.02); }
@@ -210,7 +129,7 @@
         .custom-option.selected::after { content: '\f00c'; font-family: 'Font Awesome 6 Free'; font-weight: 900; background: #10b981; color: white; width: 24px; height: 24px; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-size: 12px; }
         .custom-select-wrapper.disabled { opacity: 0.5; pointer-events: none; filter: grayscale(100%); }
 
-        /* Ticket & Scanner */
+        /* Ticket & Scanner & Animations */
         .ticket-container { background: white; border-radius: 24px; position: relative; overflow: hidden; box-shadow: 0 15px 35px -5px rgba(0, 0, 0, 0.1); margin-bottom: 25px; border: 1px solid #f1f5f9; }
         .ticket-container::before, .ticket-container::after { content: ''; position: absolute; top: 110px; width: 24px; height: 24px; background: #0f172a; border-radius: 50%; z-index: 20; }
         .ticket-container::before { left: -12px; } .ticket-container::after { right: -12px; }
@@ -267,80 +186,15 @@
         .admin-badge { position: absolute; top: 15px; left: 50%; transform: translateX(-50%); background: #ef4444; color: white; padding: 5px 15px; border-radius: 20px; font-size: 10px; font-weight: bold; box-shadow: 0 2px 10px rgba(239, 68, 68, 0.3); z-index: 100; display: none; }
         .section { display: none; opacity: 0; transition: opacity 0.3s ease; width: 100%; } .section.active { display: block; opacity: 1; animation: fadeIn 0.5s; }
         .card-body-content { position: relative; min-height: 500px; z-index: 5; }
-        
-        /* === تعديلات الفوتر الساحر (تم التحديث: تصميم زجاجي عصري) === */
-        .academic-footer {
-            display: flex; justify-content: center; align-items: center;
-            margin-top: 30px; position: relative; z-index: 10;
-        }
-
-        .uni-footer-label-large {
-            /* تصميم زجاجي عصري جداً */
-            background: rgba(255, 255, 255, 0.25); /* شفافية عالية */
-            backdrop-filter: blur(15px); /* تمويه قوي للخلفية */
-            -webkit-backdrop-filter: blur(15px);
-            border: 1px solid rgba(255, 255, 255, 0.6); /* حدود خفيفة */
-            box-shadow: 0 8px 32px 0 rgba(31, 38, 135, 0.1); /* ظل ناعم */
-            
-            color: #0f172a;
-            font-weight: 800;
-            font-size: 13px;
-            padding: 10px 25px;
-            border-radius: 50px;
-            
-            display: flex; 
-            align-items: center; 
-            gap: 8px; 
-            margin-top: 15px;
-            white-space: nowrap;
-            animation: float-slow 4s ease-in-out infinite alternate;
-        }
-
-        .uni-footer-label-large i {
-            color: #0ea5e9;
-            font-size: 16px;
-            filter: drop-shadow(0 2px 4px rgba(14, 165, 233, 0.3));
-        }
-
-        @keyframes float-slow {
-            0% { transform: translateY(0); }
-            100% { transform: translateY(-5px); }
-        }
-
-        /* === تنسيق نافذة الحذف المودرن (طلب التعديل) === */
-        .confirm-box-style {
-            background: rgba(255, 255, 255, 0.95) !important;
-            border-radius: 30px !important;
-            padding: 30px 20px !important;
-            box-shadow: 0 25px 50px -12px rgba(239, 68, 68, 0.25) !important;
-            border: 1px solid rgba(239, 68, 68, 0.1);
-            transform: scale(0.9);
-            transition: all 0.3s cubic-bezier(0.34, 1.56, 0.64, 1);
-        }
-
-        .confirm-icon-animate {
-            width: 70px; height: 70px;
-            background: #fef2f2; color: #ef4444;
-            border-radius: 50%;
-            display: flex; align-items: center; justify-content: center;
-            font-size: 28px; margin: 0 auto 15px auto;
-            box-shadow: 0 0 0 8px #fff1f2;
-            animation: shake-icon 0.5s ease-in-out;
-        }
-
-        .btn-confirm-modern {
-            background: linear-gradient(135deg, #ef4444, #b91c1c);
-            color: white;
-            box-shadow: 0 8px 20px -5px rgba(239, 68, 68, 0.4);
-        }
+        .academic-footer { display: flex; justify-content: center; align-items: center; margin-top: 30px; position: relative; z-index: 10; }
+        .uni-footer-label-large { background: rgba(255, 255, 255, 0.25); backdrop-filter: blur(15px); -webkit-backdrop-filter: blur(15px); border: 1px solid rgba(255, 255, 255, 0.6); box-shadow: 0 8px 32px 0 rgba(31, 38, 135, 0.1); color: #0f172a; font-weight: 800; font-size: 13px; padding: 10px 25px; border-radius: 50px; display: flex; align-items: center; gap: 8px; margin-top: 15px; white-space: nowrap; animation: float-slow 4s ease-in-out infinite alternate; }
+        .uni-footer-label-large i { color: #0ea5e9; font-size: 16px; filter: drop-shadow(0 2px 4px rgba(14, 165, 233, 0.3)); }
+        @keyframes float-slow { 0% { transform: translateY(0); } 100% { transform: translateY(-5px); } }
+        .confirm-box-style { background: rgba(255, 255, 255, 0.95) !important; border-radius: 30px !important; padding: 30px 20px !important; box-shadow: 0 25px 50px -12px rgba(239, 68, 68, 0.25) !important; border: 1px solid rgba(239, 68, 68, 0.1); transform: scale(0.9); transition: all 0.3s cubic-bezier(0.34, 1.56, 0.64, 1); }
+        .confirm-icon-animate { width: 70px; height: 70px; background: #fef2f2; color: #ef4444; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-size: 28px; margin: 0 auto 15px auto; box-shadow: 0 0 0 8px #fff1f2; animation: shake-icon 0.5s ease-in-out; }
+        .btn-confirm-modern { background: linear-gradient(135deg, #ef4444, #b91c1c); color: white; box-shadow: 0 8px 20px -5px rgba(239, 68, 68, 0.4); }
         .btn-cancel-modern { background: #f1f5f9; color: #64748b; }
-
-        @keyframes shake-icon {
-            0%, 100% { transform: rotate(0deg); }
-            25% { transform: rotate(-15deg); }
-            75% { transform: rotate(15deg); }
-        }
-
+        @keyframes shake-icon { 0%, 100% { transform: rotate(0deg); } 25% { transform: rotate(-15deg); } 75% { transform: rotate(15deg); } }
         .attempts-badge { background: #fff1f2; color: #be123c; font-size: 11px; font-weight: 800; padding: 5px 10px; border-radius: 20px; border: 1px solid #fecdd3; display: inline-flex; align-items: center; gap: 5px; margin-bottom: 10px; }
         .admin-floating-back { position: fixed; bottom: 20px; right: 20px; width: 45px; height: 45px; background: rgba(255, 255, 255, 0.9); color: #475569; border-radius: 50%; display: none; align-items: center; justify-content: center; box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1); border: 1px solid #e2e8f0; z-index: 1000; cursor: pointer; transition: all 0.2s cubic-bezier(0.175, 0.885, 0.32, 1.275); }
         .admin-floating-back:active { transform: scale(0.9); }
@@ -353,18 +207,7 @@
         .btn-delete-single { background: #fee2e2; color: #b91c1c; border: none; width: 30px; height: 30px; border-radius: 50%; cursor: pointer; transition: 0.2s; font-size: 12px; display: flex; align-items: center; justify-content: center; }
         .btn-delete-single:active { transform: scale(0.9); }
         .empty-state { padding: 30px; font-weight: 700; color: var(--text-sub); background: #f8fafc; border-radius: 12px; }
-
-        /* === NEW TOAST STYLE === */
-        #toastMessage {
-            position: fixed; bottom: 30px; left: 50%; transform: translateX(-50%); 
-            background: rgba(0, 0, 0, 0.8); color: white; padding: 10px 20px; 
-            border-radius: 20px; font-size: 12px; display: none; z-index: 20000; 
-            animation: fadeIn 0.3s;
-            transition: all 0.3s ease;
-            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.3);
-            font-weight: 700;
-        }
-
+        #toastMessage { position: fixed; bottom: 30px; left: 50%; transform: translateX(-50%); background: rgba(0, 0, 0, 0.8); color: white; padding: 10px 20px; border-radius: 20px; font-size: 12px; display: none; z-index: 20000; animation: fadeIn 0.3s; transition: all 0.3s ease; box-shadow: 0 4px 15px rgba(0, 0, 0, 0.3); font-weight: 700; }
         @keyframes pulse-red { 0% { transform: scale(1); } 50% { transform: scale(1.05); } 100% { transform: scale(1); } }
         @keyframes beat { 0% { transform: scale(1); } 50% { transform: scale(1.1); } 100% { transform: scale(1); } }
         @keyframes popUp { from { transform: scale(0.8); opacity: 0; } to { transform: scale(1); opacity: 1; } }
@@ -385,106 +228,15 @@
     <audio id="clickSound" src="https://www.soundjay.com/buttons/sounds/button-16.mp3"></audio>
     <audio id="beepSound" src="https://www.soundjay.com/buttons/sounds/beep-07.mp3"></audio>
 
-    <div id="customLogoutModal" class="modal-overlay">
-        <div class="modal-box">
-            <i class="fa-solid fa-arrow-right-from-bracket" style="font-size: 40px; color: #ef4444; margin-bottom: 15px;"></i>
-            <div class="modal-title">تسجيل الخروج</div>
-            <div class="modal-text">هل تريد الخروج من وضع المسؤول؟</div>
-            <div class="modal-actions">
-                <button onclick="performLogout()" class="modal-btn btn-confirm">نعم</button>
-                <button onclick="closeLogoutModal()" class="modal-btn btn-cancel">إلغاء</button>
-            </div>
-        </div>
-    </div>
-    
-    <div id="modernConfirmModal" class="modal-overlay" style="z-index: 99999;">
-        <div class="modal-box confirm-box-style">
-            <div class="confirm-icon-animate">
-                <i class="fa-solid fa-trash-can"></i>
-            </div>
-            <div class="modal-title" id="modernConfirmTitle">تأكيد الحذف</div>
-            <div class="modal-text" id="modernConfirmText">هل أنت متأكد من إتمام هذه العملية؟</div>
-            <div class="modal-actions">
-                <button id="btnConfirmYes" class="modal-btn btn-confirm-modern">نعم، احذف</button>
-                <button onclick="closeModernConfirm()" class="modal-btn btn-cancel-modern">تراجع</button>
-            </div>
-        </div>
-    </div>
-
-    <div id="reportModal" class="modal-overlay">
-        <div class="modal-box">
-            
-            <div class="report-modal-header">
-                <div style="display:flex; flex-direction:column; align-items:flex-start;">
-                    <div class="modal-title" style="margin:0; font-size:16px;">سجل الحضور</div>
-                    <div id="reportDateDisplay" style="font-size:11px; color:#94a3b8; font-weight:bold;">--</div>
-                </div>
-                <button onclick="clearAllReport()" class="btn-icon-danger">
-                    <i class="fa-solid fa-trash-can"></i>
-                </button>
-            </div>
-
-            <div class="report-views-container">
-                
-                <div id="viewSubjects" class="report-view slide-in">
-                    <div id="subjectsContainer"></div>
-                </div>
-
-                <div id="viewStudents" class="report-view">
-                    <div class="students-list-header">
-                        <button onclick="showSubjectsView()" class="btn-back-report">
-                            <i class="fa-solid fa-arrow-right"></i>
-                        </button>
-                        <span id="currentSubjectTitle" style="font-weight:800; font-size:14px; color:var(--primary-dark)">اسم المادة</span>
-                    </div>
-                    <div id="studentsContainer"></div>
-                </div>
-
-            </div>
-
-            <div class="report-modal-footer">
-                <button onclick="openReportModal()" class="btn-refresh-list">
-                    تحديث <i class="fa-solid fa-rotate"></i>
-                </button>
-                <button onclick="closeReportModal()" class="btn-close-stylish" style="margin-top:10px;">
-                    إغلاق
-                </button>
-            </div>
-
-        </div>
-    </div>
-
-    <div id="examModal" class="modal-overlay">
-        <div class="modal-box">
-            <div class="exam-loader"></div>
-            <div class="modal-title" style="color: #7c3aed;">جاري الإعداد</div>
-            <div class="modal-text">يتم تجهيز نظام الامتحانات حالياً...</div>
-            <button onclick="closeExamModal()" class="modal-btn btn-cancel">إغلاق</button>
-        </div>
-    </div>
-
-    <div id="cameraErrorModal" class="modal-overlay">
-        <div class="modal-box">
-            <i class="fa-solid fa-camera-slash" style="font-size: 45px; color: #ef4444; margin-bottom: 15px;"></i>
-            <div class="modal-title" style="color: #ef4444;">خطأ في الكاميرا</div>
-            <div class="modal-text" id="cameraErrorMsg">يرجى التأكد من أن الكاميرا غير مستخدمة وأن الإذن متاح للمتصفح.</div>
-            <button onclick="retryCamera()" class="modal-btn btn-confirm">إعادة تشغيل الكاميرا</button>
-        </div>
-    </div>
-
-    <div id="connectionLostModal" class="modal-overlay" style="z-index: 10000;">
-        <div class="modal-box">
-            <i class="fa-solid fa-wifi" style="font-size: 45px; color: #ef4444; margin-bottom: 15px;"></i>
-            <div class="modal-title" style="color: #ef4444;">انقطع الاتصال</div>
-            <div class="modal-text">لا يوجد اتصال بالإنترنت.<br>جاري المحاولة...</div>
-        </div>
-    </div>
+    <div id="customLogoutModal" class="modal-overlay"><div class="modal-box"><i class="fa-solid fa-arrow-right-from-bracket" style="font-size: 40px; color: #ef4444; margin-bottom: 15px;"></i><div class="modal-title">تسجيل الخروج</div><div class="modal-text">هل تريد الخروج من وضع المسؤول؟</div><div class="modal-actions"><button onclick="performLogout()" class="modal-btn btn-confirm">نعم</button><button onclick="closeLogoutModal()" class="modal-btn btn-cancel">إلغاء</button></div></div></div>
+    <div id="modernConfirmModal" class="modal-overlay" style="z-index: 99999;"><div class="modal-box confirm-box-style"><div class="confirm-icon-animate"><i class="fa-solid fa-trash-can"></i></div><div class="modal-title" id="modernConfirmTitle">تأكيد الحذف</div><div class="modal-text" id="modernConfirmText">هل أنت متأكد من إتمام هذه العملية؟</div><div class="modal-actions"><button id="btnConfirmYes" class="modal-btn btn-confirm-modern">نعم، احذف</button><button onclick="closeModernConfirm()" class="modal-btn btn-cancel-modern">تراجع</button></div></div></div>
+    <div id="reportModal" class="modal-overlay"><div class="modal-box"><div class="report-modal-header"><div style="display:flex; flex-direction:column; align-items:flex-start;"><div class="modal-title" style="margin:0; font-size:16px;">سجل الحضور</div><div id="reportDateDisplay" style="font-size:11px; color:#94a3b8; font-weight:bold;">--</div></div><button onclick="clearAllReport()" class="btn-icon-danger"><i class="fa-solid fa-trash-can"></i></button></div><div class="report-views-container"><div id="viewSubjects" class="report-view slide-in"><div id="subjectsContainer"></div></div><div id="viewStudents" class="report-view"><div class="students-list-header"><button onclick="showSubjectsView()" class="btn-back-report"><i class="fa-solid fa-arrow-right"></i></button><span id="currentSubjectTitle" style="font-weight:800; font-size:14px; color:var(--primary-dark)">اسم المادة</span></div><div id="studentsContainer"></div></div></div><div class="report-modal-footer"><button onclick="openReportModal()" class="btn-refresh-list">تحديث <i class="fa-solid fa-rotate"></i></button><button onclick="closeReportModal()" class="btn-close-stylish" style="margin-top:10px;">إغلاق</button></div></div></div>
+    <div id="examModal" class="modal-overlay"><div class="modal-box"><div class="exam-loader"></div><div class="modal-title" style="color: #7c3aed;">جاري الإعداد</div><div class="modal-text">يتم تجهيز نظام الامتحانات حالياً...</div><button onclick="closeExamModal()" class="modal-btn btn-cancel">إغلاق</button></div></div>
+    <div id="cameraErrorModal" class="modal-overlay"><div class="modal-box"><i class="fa-solid fa-camera-slash" style="font-size: 45px; color: #ef4444; margin-bottom: 15px;"></i><div class="modal-title" style="color: #ef4444;">خطأ في الكاميرا</div><div class="modal-text" id="cameraErrorMsg">يرجى التأكد من أن الكاميرا غير مستخدمة وأن الإذن متاح للمتصفح.</div><button onclick="retryCamera()" class="modal-btn btn-confirm">إعادة تشغيل الكاميرا</button></div></div>
+    <div id="connectionLostModal" class="modal-overlay" style="z-index: 10000;"><div class="modal-box"><i class="fa-solid fa-wifi" style="font-size: 45px; color: #ef4444; margin-bottom: 15px;"></i><div class="modal-title" style="color: #ef4444;">انقطع الاتصال</div><div class="modal-text">لا يوجد اتصال بالإنترنت.<br>جاري المحاولة...</div></div></div>
     
     <div id="toastNotification" style="display:none;"></div> 
-
-    <div id="adminFloatingBack" class="admin-floating-back" onclick="goBackToWelcome()">
-        <i class="fa-solid fa-arrow-right"></i>
-    </div>
+    <div id="adminFloatingBack" class="admin-floating-back" onclick="goBackToWelcome()"><i class="fa-solid fa-arrow-right"></i></div>
 
     <div class="app-card">
         <div class="card-banner"></div>
@@ -506,52 +258,19 @@
 
             <div class="card-body-content">
                 <div id="screenWelcome" class="section active">
-                    
-                    <div class="faculty-title-box">
-                        <span class="faculty-title-text">جامعة الريادة - كلية التمريض</span>
-                    </div>
-
+                    <div class="faculty-title-box"><span class="faculty-title-text">جامعة الريادة - كلية التمريض</span></div>
                     <h1>نظام كشف الحضور</h1>
                     <p>مرحباً بك. يرجى الضغط بالأسفل لتسجيل حضور المحاضرة الحالية.</p>
-                    
                     <div style="position: relative; z-index: 2;">
-                        <button onclick="safeClick(this, () => startProcess(false))" class="btn-main" id="mainActionBtn">
-                            تسجيل الحضور <i class="fa-solid fa-fingerprint"></i>
-                        </button>
-
+                        <button onclick="safeClick(this, () => startProcess(false))" class="btn-main" id="mainActionBtn">تسجيل الحضور <i class="fa-solid fa-fingerprint"></i></button>
                         <div class="admin-controls-grid">
-                            <button id="btnAdminLogin" onclick="safeClick(this, () => switchScreen('screenAdminLogin'))" class="admin-sub-btn btn-admin-login">
-                                <i class="fa-solid fa-lock sub-btn-icon"></i>
-                                <span>دخول المسؤول</span>
-                            </button>
-                            
-                            <button id="btnAdminLogout" onclick="safeClick(this, openLogoutModal)" class="admin-sub-btn btn-admin-logout" style="display:none;">
-                                <i class="fa-solid fa-arrow-right-from-bracket fa-flip-horizontal sub-btn-icon"></i>
-                                <span>خروج المسؤول</span>
-                            </button>
-
-                            <button id="btnViewReport" onclick="handleReportClick()" class="admin-sub-btn btn-report locked">
-                                <i id="reportIcon" class="fa-solid fa-lock sub-btn-icon"></i>
-                                <span>سجل الحضور</span>
-                            </button>
-
-                            <button onclick="openExamModal()" class="admin-sub-btn btn-exams">
-                                <i class="fa-solid fa-file-pen sub-btn-icon"></i>
-                                <span style="font-size: 13px;">تنظيم الامتحانات</span>
-                            </button>
-
-                            <button onclick="safeClick(this, () => location.reload())" class="admin-sub-btn btn-refresh">
-                                <i class="fa-solid fa-rotate-right sub-btn-icon"></i>
-                                <span style="font-size: 13px;">تحديث النظام</span>
-                            </button>
+                            <button id="btnAdminLogin" onclick="safeClick(this, () => switchScreen('screenAdminLogin'))" class="admin-sub-btn btn-admin-login"><i class="fa-solid fa-lock sub-btn-icon"></i><span>دخول المسؤول</span></button>
+                            <button id="btnAdminLogout" onclick="safeClick(this, openLogoutModal)" class="admin-sub-btn btn-admin-logout" style="display:none;"><i class="fa-solid fa-arrow-right-from-bracket fa-flip-horizontal sub-btn-icon"></i><span>خروج المسؤول</span></button>
+                            <button id="btnViewReport" onclick="handleReportClick()" class="admin-sub-btn btn-report locked"><i id="reportIcon" class="fa-solid fa-lock sub-btn-icon"></i><span>سجل الحضور</span></button>
+                            <button onclick="openExamModal()" class="admin-sub-btn btn-exams"><i class="fa-solid fa-file-pen sub-btn-icon"></i><span style="font-size: 13px;">تنظيم الامتحانات</span></button>
+                            <button onclick="safeClick(this, () => location.reload())" class="admin-sub-btn btn-refresh"><i class="fa-solid fa-rotate-right sub-btn-icon"></i><span style="font-size: 13px;">تحديث النظام</span></button>
                         </div>
-
-                        <div class="academic-footer">
-                            <div class="uni-footer-label-large">
-                                <i class="fa-solid fa-building-columns"></i> جامعة الريادة للعلوم والتكنولوجيا
-                            </div>
-                        </div>
-
+                        <div class="academic-footer"><div class="uni-footer-label-large"><i class="fa-solid fa-building-columns"></i> جامعة الريادة للعلوم والتكنولوجيا</div></div>
                     </div>
                     <div class="uni-watermark"></div>
                 </div>
@@ -572,193 +291,62 @@
                 </div>
 
                 <div id="screenDataEntry" class="section">
-                    <div class="circular-timer">
-                        <svg class="timer-svg" viewBox="0 0 80 80">
-                            <circle class="timer-circle-bg" cx="40" cy="40" r="35"></circle>
-                            <circle class="timer-circle-fg" id="timerProgress" cx="40" cy="40" r="35"></circle>
-                        </svg>
-                        <div class="timer-text-box">
-                            <span class="timer-number" id="timerNumber">15</span>
-                            <span class="timer-label">ثانية</span>
-                        </div>
-                    </div>
-                    <div class="attempts-badge" id="attemptsDisplayEntry">
-                        <i class="fa-solid fa-heart-pulse"></i> المتبقي: <span id="attemptsCountValEntry">3</span> محاولات
-                    </div>
+                    <div class="circular-timer"><svg class="timer-svg" viewBox="0 0 80 80"><circle class="timer-circle-bg" cx="40" cy="40" r="35"></circle><circle class="timer-circle-fg" id="timerProgress" cx="40" cy="40" r="35"></circle></svg><div class="timer-text-box"><span class="timer-number" id="timerNumber">15</span><span class="timer-label">ثانية</span></div></div>
+                    <div class="attempts-badge" id="attemptsDisplayEntry"><i class="fa-solid fa-heart-pulse"></i> المتبقي: <span id="attemptsCountValEntry">3</span> محاولات</div>
                     <h1 style="font-size:20px; margin-top:5px;">بيانات الطالب / الطالبة</h1>
                     <div id="dataEntryAlert" class="alert-box" style="display:none; margin-bottom: 25px; color:#ef4444; font-weight:bold;"></div>
-                    
-                    <div class="input-group">
-                        <input type="text" id="uniID" class="modern-input" placeholder="أدخل الكود الجامعي" readonly style="text-align:center; font-size:20px; letter-spacing:2px; font-weight:bold; background:white;">
-                    </div>
-                    
+                    <div class="input-group"><input type="text" id="uniID" class="modern-input" placeholder="أدخل الكود الجامعي" readonly style="text-align:center; font-size:20px; letter-spacing:2px; font-weight:bold; background:white;"></div>
                     <div class="input-group"><input type="text" id="attendanceCode" class="modern-input locked" readonly></div>
-                    
                     <div class="custom-keypad">
-                        <button type="button" class="key-btn" onclick="addKey('1')">1</button>
-                        <button type="button" class="key-btn" onclick="addKey('2')">2</button>
-                        <button type="button" class="key-btn" onclick="addKey('3')">3</button>
-                        <button type="button" class="key-btn" onclick="addKey('4')">4</button>
-                        <button type="button" class="key-btn" onclick="addKey('5')">5</button>
-                        <button type="button" class="key-btn" onclick="addKey('6')">6</button>
-                        <button type="button" class="key-btn" onclick="addKey('7')">7</button>
-                        <button type="button" class="key-btn" onclick="addKey('8')">8</button>
-                        <button type="button" class="key-btn" onclick="addKey('9')">9</button>
-                        <button type="button" class="key-btn action-btn" onclick="clearKey()">C</button>
-                        <button type="button" class="key-btn" onclick="addKey('0')">0</button>
-                        <button type="button" class="key-btn delete-btn" onclick="backspaceKey()"><i class="fa-solid fa-delete-left"></i></button>
+                        <button type="button" class="key-btn" onclick="addKey('1')">1</button><button type="button" class="key-btn" onclick="addKey('2')">2</button><button type="button" class="key-btn" onclick="addKey('3')">3</button>
+                        <button type="button" class="key-btn" onclick="addKey('4')">4</button><button type="button" class="key-btn" onclick="addKey('5')">5</button><button type="button" class="key-btn" onclick="addKey('6')">6</button>
+                        <button type="button" class="key-btn" onclick="addKey('7')">7</button><button type="button" class="key-btn" onclick="addKey('8')">8</button><button type="button" class="key-btn" onclick="addKey('9')">9</button>
+                        <button type="button" class="key-btn action-btn" onclick="clearKey()">C</button><button type="button" class="key-btn" onclick="addKey('0')">0</button><button type="button" class="key-btn delete-btn" onclick="backspaceKey()"><i class="fa-solid fa-delete-left"></i></button>
                     </div>
-
                     <button type="button" onclick="handleIdSubmit()" class="btn-main" id="nextStepBtn" style="margin-top:20px;">التالي <i class="fa-solid fa-arrow-left"></i></button>
                 </div>
-                <div id="screenFaceCheck" class="section">
-    <h1 style="font-size:20px; margin-top:10px;">التحقق الأمني</h1>
-    <p style="color:#64748b; font-size:12px;">جاري تأكيد الهوية قبل الانتقال للمقرر</p>
-    
-    <div class="student-info-card">
-        <div class="student-info-item">
-            <span class="student-info-label">الطالب</span>
-            <span class="student-info-value" id="faceCheckName">--</span>
-        </div>
-    </div>
 
-    <div style="position: relative; width: 100%; height: 350px; background: #000; border-radius: 20px; overflow: hidden; margin: 15px 0; box-shadow: 0 10px 30px rgba(0,0,0,0.3);">
-        <video id="faceCheckVideo" autoplay muted playsinline style="width: 100%; height: 100%; object-fit: cover; transform: scaleX(-1);"></video>
-        <canvas id="faceCheckCanvas" style="position: absolute; top: 0; left: 0;"></canvas>
-        <div id="faceCheckStatus" style="position: absolute; bottom: 10px; left: 0; width: 100%; text-align: center; color: white; background: rgba(0,0,0,0.5); font-weight: bold;">
-            جاري فتح الكاميرا...
-        </div>
-    </div>
-</div>
-                <div id="screenScanQR" class="section">
-                    <h1 style="font-size:20px; margin-top:10px;">مسح رمز الحضور</h1>
-                    
+                <div id="screenFaceCheck" class="section">
+                    <h1 style="font-size:20px; margin-top:10px;">التحقق الأمني</h1>
+                    <p style="color:#64748b; font-size:12px;">جاري تأكيد الهوية قبل الانتقال للمقرر</p>
                     <div class="student-info-card">
                         <div class="student-info-item">
-                            <div class="student-info-icon"><i class="fa-solid fa-user-graduate"></i></div>
-                            <span class="student-info-label">اسم الطالب / الطالبة</span>
-                            <span class="student-info-value" id="scanNameDisplay">--</span>
-                        </div>
-                        <div class="student-info-item">
-                            <div class="student-info-icon"><i class="fa-solid fa-id-card"></i></div>
-                            <span class="student-info-label">الكود الجامعي (ID)</span>
-                            <span class="student-info-value" id="scanIDDisplay">--</span>
+                            <span class="student-info-label">الطالب</span>
+                            <span class="student-info-value" id="faceCheckName">--</span>
                         </div>
                     </div>
-
-                    <div class="custom-select-wrapper" id="yearSelectWrapper">
-                        <label class="custom-select-label">الفرقة الدراسية</label>
-                        <div class="custom-select-trigger" data-default-text="-- اختر الفرقة --">
-                            <div class="trigger-content">
-                                <div class="trigger-icon"><i class="fa-solid fa-layer-group"></i></div>
-                                <span class="trigger-text">-- اختر الفرقة --</span>
-                            </div>
-                            <i class="fa-solid fa-chevron-down arrow-icon"></i>
-                        </div>
-                        <div class="custom-options-overlay" onclick="closeSelect(this)"></div>
-                        <div class="custom-options">
-                            <div class="sheet-handle"></div>
-                            <div class="options-title">اختر الفرقة الدراسية</div>
-                            <div class="custom-option" data-value="first_year">
-                                <span>الفرقة الأولى</span>
-                            </div>
-                            <div class="custom-option" data-value="second_year">
-                                <span>الفرقة الثانية</span>
-                            </div>
-                        </div>
-                        <select id="yearSelect" style="display:none;">
-                            <option value="" disabled selected>-- اختر الفرقة --</option>
-                            <option value="first_year">الفرقة الأولى</option>
-                            <option value="second_year">الفرقة الثانية</option>
-                        </select>
-                    </div>
-
-                    <div class="custom-select-wrapper disabled" id="subjectSelectWrapper">
-                        <label class="custom-select-label">المادة الدراسية</label>
-                        <div class="custom-select-trigger" data-default-text="-- اختر الفرقة أولاً --">
-                            <div class="trigger-content">
-                                <div class="trigger-icon"><i class="fa-solid fa-book-open"></i></div>
-                                <span class="trigger-text">-- اختر الفرقة أولاً --</span>
-                            </div>
-                            <i class="fa-solid fa-chevron-down arrow-icon"></i>
-                        </div>
-                        <div class="custom-options-overlay" onclick="closeSelect(this)"></div>
-                        <div class="custom-options">
-                            <div class="sheet-handle"></div>
-                            <div class="options-title">اختر المادة الدراسية</div>
-                            <div id="subjectOptionsContainer"></div>
-                        </div>
-                        <select id="subjectSelect" style="display:none;" onchange="checkSubjectSelection()">
-                            <option value="" disabled selected>-- اختر الفرقة أولاً --</option>
-                        </select>
-                    </div>
-
-                    <div id="qr-reader">
-                        <div class="scanner-laser"></div>
-                    </div>
-
-                    <div id="startScanCard" class="qr-card-trigger" onclick="safeClick(this, startQrScanner)">
-                        <div class="qr-card-icon"><i class="fa-solid fa-camera"></i></div>
-                        <div>
-                            <div class="qr-card-text">اضغط لفتح الكاميرا</div>
-                            <div class="qr-card-sub">وجه الكاميرا نحو الرمز</div>
+                    <div style="position: relative; width: 100%; height: 350px; background: #000; border-radius: 20px; overflow: hidden; margin: 15px 0; box-shadow: 0 10px 30px rgba(0,0,0,0.3);">
+                        <video id="faceCheckVideo" autoplay muted playsinline style="width: 100%; height: 100%; object-fit: cover; transform: scaleX(-1);"></video>
+                        <canvas id="faceCheckCanvas" style="position: absolute; top: 0; left: 0;"></canvas>
+                        <div id="faceCheckStatus" style="position: absolute; bottom: 10px; left: 0; width: 100%; text-align: center; color: white; background: rgba(0,0,0,0.5); font-weight: bold;">
+                            جاري تهيئة النظام...
                         </div>
                     </div>
-                    
-                    <div id="scanSuccessMsg" class="scan-success-badge">
-                        <i class="fa-solid fa-check-circle"></i> تم مسح الكود بنجاح
+                </div>
+                
+                <div id="screenScanQR" class="section">
+                    <h1 style="font-size:20px; margin-top:10px;">مسح رمز الحضور</h1>
+                    <div class="student-info-card">
+                        <div class="student-info-item"><div class="student-info-icon"><i class="fa-solid fa-user-graduate"></i></div><span class="student-info-label">اسم الطالب / الطالبة</span><span class="student-info-value" id="scanNameDisplay">--</span></div>
+                        <div class="student-info-item"><div class="student-info-icon"><i class="fa-solid fa-id-card"></i></div><span class="student-info-label">الكود الجامعي (ID)</span><span class="student-info-value" id="scanIDDisplay">--</span></div>
                     </div>
-
+                    <div class="custom-select-wrapper" id="yearSelectWrapper"><label class="custom-select-label">الفرقة الدراسية</label><div class="custom-select-trigger" data-default-text="-- اختر الفرقة --"><div class="trigger-content"><div class="trigger-icon"><i class="fa-solid fa-layer-group"></i></div><span class="trigger-text">-- اختر الفرقة --</span></div><i class="fa-solid fa-chevron-down arrow-icon"></i></div><div class="custom-options-overlay" onclick="closeSelect(this)"></div><div class="custom-options"><div class="sheet-handle"></div><div class="options-title">اختر الفرقة الدراسية</div><div class="custom-option" data-value="first_year"><span>الفرقة الأولى</span></div><div class="custom-option" data-value="second_year"><span>الفرقة الثانية</span></div></div><select id="yearSelect" style="display:none;"><option value="" disabled selected>-- اختر الفرقة --</option><option value="first_year">الفرقة الأولى</option><option value="second_year">الفرقة الثانية</option></select></div>
+                    <div class="custom-select-wrapper disabled" id="subjectSelectWrapper"><label class="custom-select-label">المادة الدراسية</label><div class="custom-select-trigger" data-default-text="-- اختر الفرقة أولاً --"><div class="trigger-content"><div class="trigger-icon"><i class="fa-solid fa-book-open"></i></div><span class="trigger-text">-- اختر الفرقة أولاً --</span></div><i class="fa-solid fa-chevron-down arrow-icon"></i></div><div class="custom-options-overlay" onclick="closeSelect(this)"></div><div class="custom-options"><div class="sheet-handle"></div><div class="options-title">اختر المادة الدراسية</div><div id="subjectOptionsContainer"></div></div><select id="subjectSelect" style="display:none;" onchange="checkSubjectSelection()"><option value="" disabled selected>-- اختر الفرقة أولاً --</option></select></div>
+                    <div id="qr-reader"><div class="scanner-laser"></div></div>
+                    <div id="startScanCard" class="qr-card-trigger" onclick="safeClick(this, startQrScanner)"><div class="qr-card-icon"><i class="fa-solid fa-camera"></i></div><div><div class="qr-card-text">اضغط لفتح الكاميرا</div><div class="qr-card-sub">وجه الكاميرا نحو الرمز</div></div></div>
+                    <div id="scanSuccessMsg" class="scan-success-badge"><i class="fa-solid fa-check-circle"></i> تم مسح الكود بنجاح</div>
                     <button type="button" id="retryCamBtn" class="btn-secondary" onclick="startQrScanner()" style="display:none; background: #fee2e2; color: #ef4444; margin-bottom: 15px;"><i class="fa-solid fa-rotate-right"></i> إعادة تشغيل الكاميرا</button>
-
                     <input type="hidden" id="sessionPass" required>
                     <button type="button" id="submitBtn" class="btn-main" disabled style="opacity:0.6; cursor:not-allowed;">تأكيد الحضور <i class="fa-solid fa-paper-plane"></i></button>
                 </div>
 
                 <div id="screenSuccess" class="section">
                     <h1 style="color:#10b981; margin-bottom: 15px;">تم التسجيل بنجاح</h1>
-                    
                     <div class="ticket-container">
-                        <div class="ticket-header">
-                            <div class="ticket-icon"><i class="fa-solid fa-check"></i></div>
-                            <div style="font-weight: 900; font-size: 18px;">تأكيد حضور</div>
-                        </div>
-                        
-                        <div class="ticket-body">
-                            <div class="verified-badge">VERIFIED</div>
-                            
-                            <div class="t-row">
-                                <span class="t-label">اسم الطالب / الطالبة</span>
-                                <span class="t-value" id="receiptName">--</span>
-                            </div>
-                            
-                            <div class="t-row">
-                                <span class="t-label">الكود الجامعي (ID)</span>
-                                <span class="t-value english-num" id="receiptID">--</span>
-                            </div>
-                            
-                            <div class="ticket-dashed-line"></div>
-                            
-                            <div class="t-row">
-                                <span class="t-label">المادة الدراسية</span>
-                                <span class="t-value" id="receiptSubject" style="color:var(--primary)">--</span>
-                            </div>
-                            
-                            <div class="t-row">
-                                <span class="t-label">التاريخ</span>
-                                <span class="t-value english-num" id="receiptDate">--</span>
-                            </div>
-                            
-                            <div class="t-row">
-                                <span class="t-label">وقت التسجيل</span>
-                                <span class="t-value english-num" id="receiptTime">--</span>
-                            </div>
-                        </div>
+                        <div class="ticket-header"><div class="ticket-icon"><i class="fa-solid fa-check"></i></div><div style="font-weight: 900; font-size: 18px;">تأكيد حضور</div></div>
+                        <div class="ticket-body"><div class="verified-badge">VERIFIED</div><div class="t-row"><span class="t-label">اسم الطالب / الطالبة</span><span class="t-value" id="receiptName">--</span></div><div class="t-row"><span class="t-label">الكود الجامعي (ID)</span><span class="t-value english-num" id="receiptID">--</span></div><div class="ticket-dashed-line"></div><div class="t-row"><span class="t-label">المادة الدراسية</span><span class="t-value" id="receiptSubject" style="color:var(--primary)">--</span></div><div class="t-row"><span class="t-label">التاريخ</span><span class="t-value english-num" id="receiptDate">--</span></div><div class="t-row"><span class="t-label">وقت التسجيل</span><span class="t-value english-num" id="receiptTime">--</span></div></div>
                     </div>
-
-                    <div style="color:#64748b; font-weight:700; font-size:12px; margin-top:10px;">
-                        <i class="fa-solid fa-circle-check" style="color:#10b981;"></i> تم حفظ البيانات في النظام بنجاح
-                    </div>
+                    <div style="color:#64748b; font-weight:700; font-size:12px; margin-top:10px;"><i class="fa-solid fa-circle-check" style="color:#10b981;"></i> تم حفظ البيانات في النظام بنجاح</div>
                 </div>
 
                 <div id="screenError" class="section">
@@ -783,6 +371,26 @@
         let studentsDB = {};
         let wakeLock = null;
         let cachedReportData = [];
+
+        // 1. تحميل الموديلات من الإنترنت مباشرة
+        const modelURL = 'https://raw.githubusercontent.com/justadudewhohacks/face-api.js/master/weights';
+        let isFaceModelsLoaded = false;
+
+        Promise.all([
+            faceapi.nets.tinyFaceDetector.loadFromUri(modelURL),
+            faceapi.nets.faceLandmark68Net.loadFromUri(modelURL),
+            faceapi.nets.faceRecognitionNet.loadFromUri(modelURL),
+            faceapi.nets.faceExpressionNet.loadFromUri(modelURL)
+        ]).then(() => {
+            isFaceModelsLoaded = true;
+            console.log("✅ تم تحميل الذكاء الاصطناعي بنجاح من السيرفر");
+            // إظهار رسالة صغيرة للتأكد
+            const statusMsg = document.getElementById('faceCheckStatus');
+            if(statusMsg) statusMsg.innerText = "النظام جاهز.. جاري فتح الكاميرا";
+        }).catch(err => {
+            console.error("خطأ في التحميل:", err);
+            // لن نظهر رسالة خطأ مزعجة الآن، سنترك النظام يعمل
+        });
 
         const savedDB = localStorage.getItem(LOCAL_STORAGE_DB_KEY);
         if (savedDB) {
@@ -956,21 +564,17 @@
                 badge.style.display = 'block';
                 loginBtn.style.display = 'none';
                 logoutBtn.style.display = 'flex';
-                
                 reportBtn.classList.remove('locked');
                 reportBtn.classList.add('unlocked');
                 reportIcon.className = 'fa-solid fa-list-check sub-btn-icon';
-                
                 if(attemptsBadge) attemptsBadge.style.display = 'none';
             } else {
                 badge.style.display = 'none';
                 loginBtn.style.display = 'flex';
                 logoutBtn.style.display = 'none';
-                
                 reportBtn.classList.remove('unlocked');
                 reportBtn.classList.add('locked');
                 reportIcon.className = 'fa-solid fa-lock sub-btn-icon';
-                
                 adminFloating.style.display = 'none';
                 if(attemptsBadge) attemptsBadge.style.display = 'inline-flex';
             }
@@ -1022,7 +626,7 @@
             }, 100);
         }
 
-   async function handleIdSubmit() {
+        async function handleIdSubmit() {
             playClick();
             let rawId = document.getElementById('uniID').value.trim();
             const uniIdVal = convertArabicToEnglish(rawId);
@@ -1041,7 +645,7 @@
                 if(countdownInterval) clearInterval(countdownInterval); 
                 stopCameraSafely(); 
                 
-                // 👇👇 التغيير هنا: الذهاب لفحص الوجه بدلاً من الـ QR مباشرتاً 👇👇
+                // الانتقال للتحقق من الوجه بدلاً من الـ QR
                 startFaceSecurityCheck(studentName, uniIdVal);
                 
                 playSuccess();
@@ -1235,9 +839,7 @@
             
             let html = '';
             students.forEach(item => {
-                // التأكد من وجود كود الجلسة، إذا لم يوجد يكتب غير متوفر
                 const sessionCode = item.code || "N/A";
-
                 html += `
                     <div class="student-detailed-card">
                         <div class="st-data-col" style="width: 100%;">
@@ -1247,15 +849,12 @@
                                     <i class="fa-solid fa-trash"></i>
                                 </button>
                             </div>
-
                             <div style="font-size:12px; color:#64748b; font-weight:600; margin-bottom:5px;">
                                 ID: <span style="font-family:'Outfit', sans-serif;">${item.uniID}</span>
                             </div>
-                            
                             <div style="font-size:11px; color:#0ea5e9; font-weight:bold; background:#f0f9ff; padding:4px 8px; border-radius:6px; display:inline-block; margin-bottom:5px;">
                                 <i class="fa-solid fa-fingerprint"></i> كود: <span style="font-family:'Outfit', sans-serif;">${sessionCode}</span>
                             </div>
-
                             <div class="std-time-badge" style="display:inline-flex; float:left;">
                                 <i class="fa-regular fa-clock"></i> <span style="font-family:'Outfit', sans-serif;">${item.time}</span>
                             </div>
@@ -1263,9 +862,7 @@
                     </div>
                 `;
             });
-            
             container.innerHTML = html;
-
             document.getElementById('viewSubjects').style.transform = 'translateX(100%)';
             document.getElementById('viewStudents').style.transform = 'translateX(0)';
         }
@@ -1278,25 +875,19 @@
 
         function closeReportModal() { playClick(); document.getElementById('reportModal').style.display = 'none'; }
         
-        /* === MODAL & DELETE LOGIC (UPDATED) === */
         let pendingAction = null;
-
         function showModernConfirm(title, text, actionCallback) {
             playClick();
             document.getElementById('modernConfirmTitle').innerText = title;
             document.getElementById('modernConfirmText').innerHTML = text;
-            
             const modal = document.getElementById('modernConfirmModal');
             modal.style.display = 'flex';
-            
             pendingAction = actionCallback;
-            
             const yesBtn = document.getElementById('btnConfirmYes');
             yesBtn.onclick = function() {
                 if (pendingAction) pendingAction();
                 closeModernConfirm();
             };
-            
             if(navigator.vibrate) navigator.vibrate(50);
         }
 
@@ -1346,20 +937,13 @@
         }
         
         /* === NEW SECURITY FUNCTIONS === */
-
-        // 1. A better check for mobile devices (Android/iPhone only)
         function isMobileDevice() {
             const ua = navigator.userAgent.toLowerCase();
-            // Check for target mobile OS/devices (Android, iPhone, iPod)
             const isTargetMobile = /android|iphone|ipod/i.test(ua);
-            // Exclude common desktop/tablet identifiers (Windows, Mac, Linux, X11, iPad, Tablet, Kindle)
             const isExcluded = /windows|macintosh|ipad|tablet|x11|kindle/i.test(ua);
-            
-            // Return true only if it's a target mobile AND not explicitly excluded
             return (isTargetMobile && !isExcluded);
         }
         
-        // Utility function for toast messages
         function showToast(message, duration = 3000, bgColor = '#334155') {
             const toast = document.getElementById('toastNotification');
             toast.style.backgroundColor = bgColor;
@@ -1370,17 +954,13 @@
             }, duration);
         }
 
-        // 2. DevTools/Debugging Detection and Blocking
         (function() {
             let devtoolsOpen = false;
             const threshold = 160; 
-
             const checkDevTools = () => {
-                // Check using size difference (common for desktop debugging)
                 if (window.outerWidth - window.innerWidth > threshold || window.outerHeight - window.innerHeight > threshold) {
                     if (!devtoolsOpen) {
                         devtoolsOpen = true;
-                        // BLOCK THE APP
                         const blocker = document.getElementById('desktop-blocker');
                         blocker.innerHTML = '<i class="fa-solid fa-code" style="font-size:50px; margin-bottom:20px; color:#f59e0b;"></i><h2>تنبيه أمني</h2><p>تم اكتشاف محاولة تصحيح (Debugging). تم حظر النظام.</p>';
                         blocker.style.display = 'flex';
@@ -1389,158 +969,135 @@
                     }
                 }
             };
-            
-            // Add listeners for resizing (opening/closing devtools) and F12/Ctrl+Shift+I
             window.addEventListener('resize', checkDevTools);
             window.addEventListener('keydown', (e) => {
-                // F12 (123) or Ctrl+Shift+I (73) or Cmd+Option+I (73 on Mac)
                 if (e.keyCode === 123 || (e.ctrlKey && e.shiftKey && e.keyCode === 73) || (e.metaKey && e.altKey && e.keyCode === 73)) {
                     e.preventDefault();
                     if(!devtoolsOpen) showToast('أدوات المطور محظورة.', 2000, '#ef4444');
                 }
             });
-
-            // Run initial check
             checkDevTools();
         })();
 
-        // 3. Disable Right-Click (Context Menu)
-        document.addEventListener('contextmenu', function(e) {
-            e.preventDefault();
-            showToast('إجراء محظور لأسباب أمنية.', 2000, '#ef4444');
-        });
-
-        // 4. Disable Copy, Cut, and Paste
-        document.addEventListener('copy', function(e) {
-            e.preventDefault();
-            showToast('النسخ محظور لأسباب أمنية.', 2000, '#ef4444');
-        });
-        document.addEventListener('cut', function(e) {
-            e.preventDefault();
-            showToast('القص محظور لأسباب أمنية.', 2000, '#ef4444');
-        });
-        document.addEventListener('paste', function(e) {
-            e.preventDefault();
-            showToast('اللصق محظور لأسباب أمنية.', 2000, '#ef4444');
-        });
+        document.addEventListener('contextmenu', function(e) { e.preventDefault(); showToast('إجراء محظور لأسباب أمنية.', 2000, '#ef4444'); });
+        document.addEventListener('copy', function(e) { e.preventDefault(); showToast('النسخ محظور لأسباب أمنية.', 2000, '#ef4444'); });
+        document.addEventListener('cut', function(e) { e.preventDefault(); showToast('القص محظور لأسباب أمنية.', 2000, '#ef4444'); });
+        document.addEventListener('paste', function(e) { e.preventDefault(); showToast('اللصق محظور لأسباب أمنية.', 2000, '#ef4444'); });
         
-        
-        // Final Mobile Check (must be at the end to ensure it runs last)
-        // If it's not a mobile device, it will display the desktop-blocker and throw an error.
         if (!isMobileDevice()) { 
             document.getElementById('desktop-blocker').style.display = 'flex'; 
             document.body.style.overflow = 'hidden';
             throw new Error("Desktop access denied.");
         }
-// ==========================================
-// ===  بداية كود نظام الوجه الجديد  ===
-// ==========================================
 
-let faceCheckStream = null;
-let faceCheckInterval = null;
+        // ==========================================
+        // ===  بداية كود نظام الوجه الجديد  ===
+        // ==========================================
 
-// دالة 1: تشغيل الكاميرا والبدء في الفحص
-async function startFaceSecurityCheck(name, id) {
-    // تحديث البيانات في الشاشة
-    document.getElementById('faceCheckName').innerText = name;
-    switchScreen('screenFaceCheck'); // الانتقال لشاشة الوجه
+        let faceCheckStream = null;
+        let faceCheckInterval = null;
 
-    const video = document.getElementById('faceCheckVideo');
-    const status = document.getElementById('faceCheckStatus');
+        // دالة 1: تشغيل الكاميرا والبدء في الفحص
+        async function startFaceSecurityCheck(name, id) {
+            document.getElementById('faceCheckName').innerText = name;
+            switchScreen('screenFaceCheck'); // الانتقال لشاشة الوجه
 
-    // محاولة فتح الكاميرا
-    try {
-        const stream = await navigator.mediaDevices.getUserMedia({ video: { facingMode: "user" } });
-        faceCheckStream = stream;
-        video.srcObject = stream;
-    } catch (err) {
-        // في حالة فشل الكاميرا، نتخطى هذه الخطوة ونذهب للـ QR فوراً
-        alert("تعذر تشغيل الكاميرا.. سيتم الانتقال للمسح اليدوي.");
-        goToQrScreen();
-        return;
-    }
+            const video = document.getElementById('faceCheckVideo');
+            const status = document.getElementById('faceCheckStatus');
 
-    // عند بدء الفيديو، نبدأ الرسم والكشف
-    video.addEventListener('play', () => {
-        const canvas = document.getElementById('faceCheckCanvas');
-        const displaySize = { width: video.offsetWidth, height: video.offsetHeight };
-        faceapi.matchDimensions(canvas, displaySize);
-
-        faceCheckInterval = setInterval(async () => {
-            // البحث عن وجه واحد
-            const detection = await faceapi.detectSingleFace(video, new faceapi.TinyFaceDetectorOptions())
-                .withFaceLandmarks()
-                .withFaceDescriptor();
-
-            // مسح الرسم القديم
-            canvas.getContext('2d').clearRect(0, 0, canvas.width, canvas.height);
-
-            if (detection) {
-                // وجه موجود! نرسم المربع
-                const resized = faceapi.resizeResults(detection, displaySize);
-                faceapi.draw.drawDetections(canvas, resized);
-
-                status.innerText = "تم تأكيد الهوية! ✅";
-                status.style.color = "#10b981"; // لون أخضر
-                status.style.background = "rgba(255, 255, 255, 0.9)";
-                status.style.color = "#000";
-
-                // 1. إيقاف الكاميرا فوراً
-                stopFaceCheckCamera();
-
-                // 2. إرسال البصمة للشيت في الخلفية
-                sendFaceVectorToSheet(id, name, detection.descriptor);
-
-                // 3. الانتقال تلقائياً لشاشة الـ QR بعد ثانية واحدة
-                setTimeout(() => {
-                    goToQrScreen();
-                }, 1000);
-
-            } else {
-                status.innerText = "جاري البحث عن وجه...";
+            try {
+                const stream = await navigator.mediaDevices.getUserMedia({ video: { facingMode: "user" } });
+                faceCheckStream = stream;
+                video.srcObject = stream;
+            } catch (err) {
+                alert("تعذر تشغيل الكاميرا.. سيتم الانتقال للمسح اليدوي.");
+                goToQrScreen();
+                return;
             }
-        }, 100); // الفحص كل 0.1 ثانية
-    });
-}
 
-// دالة 2: تنظيف وإيقاف الكاميرا
-function stopFaceCheckCamera() {
-    if (faceCheckStream) {
-        faceCheckStream.getTracks().forEach(track => track.stop());
-        faceCheckStream = null;
-    }
-    if (faceCheckInterval) clearInterval(faceCheckInterval);
-}
+            video.addEventListener('play', () => {
+                const canvas = document.getElementById('faceCheckCanvas');
+                const displaySize = { width: video.offsetWidth, height: video.offsetHeight };
+                faceapi.matchDimensions(canvas, displaySize);
 
-// دالة 3: الانتقال للنظام القديم (QR)
-function goToQrScreen() {
-    // نتأكد أن بيانات الطالب موجودة في الشاشة القديمة
-    document.getElementById('scanNameDisplay').innerText = attendanceData.name;
-    document.getElementById('scanIDDisplay').innerText = attendanceData.uniID;
-    
-    // ننتقل لشاشة الـ QR (كما كان يحدث سابقاً)
-    switchScreen('screenScanQR');
-    playSuccess(); // صوت نجاح
-}
+                faceCheckInterval = setInterval(async () => {
+                    // البحث عن وجه واحد
+                    const detection = await faceapi.detectSingleFace(video, new faceapi.TinyFaceDetectorOptions())
+                        .withFaceLandmarks()
+                        .withFaceDescriptor();
 
-// دالة 4: إرسال البيانات للسيرفر
-function sendFaceVectorToSheet(id, name, descriptor) {
-    // تحويل البصمة لنص يمكن إرساله
-    const vectorStr = JSON.stringify(Array.from(descriptor));
-    
-    const formData = new FormData();
-    formData.append('action', 'register_face'); // اسم العملية
-    formData.append('id', id);
-    formData.append('name', name);
-    formData.append('face_vector', vectorStr);
-    
-    // إرسال صامت (لا ننتظر الرد)
-    fetch(CONFIG.sheetApiUrl, { method: 'POST', body: formData, mode: 'no-cors' });
-}
+                    // مسح الرسم القديم
+                    canvas.getContext('2d').clearRect(0, 0, canvas.width, canvas.height);
 
-// ==========================================
-// ===  نهاية كود نظام الوجه الجديد  ===
-// ==========================================
+                    if (detection) {
+                        // وجه موجود! نرسم المربع
+                        const resized = faceapi.resizeResults(detection, displaySize);
+                        faceapi.draw.drawDetections(canvas, resized);
+
+                        status.innerText = "تم تأكيد الهوية! ✅";
+                        status.style.color = "#10b981";
+                        status.style.background = "rgba(255, 255, 255, 0.9)";
+                        status.style.color = "#000";
+
+                        // 1. إيقاف الكاميرا فوراً
+                        stopFaceCheckCamera();
+
+                        // 2. إرسال البصمة للشيت في الخلفية
+                        sendFaceVectorToSheet(id, name, detection.descriptor);
+
+                        // 3. الانتقال تلقائياً لشاشة الـ QR بعد ثانية واحدة
+                        setTimeout(() => {
+                            goToQrScreen();
+                        }, 1000);
+
+                    } else {
+                        status.innerText = "جاري البحث عن وجه...";
+                    }
+                }, 100);
+            });
+        }
+
+        // دالة 2: تنظيف وإيقاف الكاميرا
+        function stopFaceCheckCamera() {
+            if (faceCheckStream) {
+                faceCheckStream.getTracks().forEach(track => track.stop());
+                faceCheckStream = null;
+            }
+            if (faceCheckInterval) clearInterval(faceCheckInterval);
+        }
+
+        // دالة 3: الانتقال للنظام القديم (QR)
+        function goToQrScreen() {
+            document.getElementById('scanNameDisplay').innerText = attendanceData.name;
+            document.getElementById('scanIDDisplay').innerText = attendanceData.uniID;
+            
+            // ننتقل لشاشة الـ QR (كما كان يحدث سابقاً)
+            switchScreen('screenScanQR');
+            playSuccess(); // صوت نجاح
+        }
+
+        // دالة 4: إرسال البيانات للسيرفر
+        function sendFaceVectorToSheet(id, name, descriptor) {
+            const vectorStr = JSON.stringify(Array.from(descriptor));
+            
+            const formData = new FormData();
+            formData.append('action', 'register_face'); // اسم العملية
+            formData.append('id', id);
+            formData.append('name', name);
+            formData.append('face_vector', vectorStr);
+            
+            // إرسال صامت (لا ننتظر الرد)
+            fetch(CONFIG.sheetApiUrl, { method: 'POST', body: formData, mode: 'no-cors' });
+        }
+
+        // تسجيل الـ Service Worker ليعمل النظام بدون إنترنت
+        if ('serviceWorker' in navigator) {
+            window.addEventListener('load', () => {
+                navigator.serviceWorker.register('./sw.js')
+                    .then(reg => console.log('Service Worker Registered! ✅', reg.scope))
+                    .catch(err => console.log('Service Worker Failed ❌', err));
+            });
+        }
     </script>
 </body>
 </html>
