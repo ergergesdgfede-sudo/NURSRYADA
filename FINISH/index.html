@@ -58,8 +58,6 @@
         .btn-secondary { background: #ffffff; color: var(--primary-dark); width: 100%; padding: 12px; border-radius: 14px; font-size: 14px; font-weight: 700; border: 2px solid #e0f2fe; cursor: pointer; font-family: 'Cairo'; margin-top: 10px; box-shadow: 0 2px 5px -2px rgba(0, 0, 0, 0.1); transition: 0.3s; position: relative; z-index: 5; }
         
         .admin-controls-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; margin-top: 10px; }
-        .admin-sub-btn { border-radius: 18px; padding: 12px 10px; font-size: 12px; font-weight: 800; border: none; cursor: pointer; font-family: 'Cairo'; transition: all 0.2s; display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 6px; box-shadow: 0 4px 10px rgba(0, 0, 0, 0.03); height: 85px; }
-        .admin-sub-btn:active { transform: scale(0.95); }
         /* (بقية CSS الخاص بك...) */
 
         /* === تنسيقات شاشة النظام الفولاذي الجديدة === */
@@ -80,6 +78,7 @@
         .status-ok { border-color: #10b981 !important; box-shadow: 0 0 30px rgba(16, 185, 129, 0.5); }
         .status-wait { border-color: #f59e0b !important; box-shadow: 0 0 30px rgba(245, 158, 11, 0.5); }
         .status-err { border-color: #ef4444 !important; box-shadow: 0 0 20px rgba(239, 68, 68, 0.4); }
+        /* (بقية CSS الخاص بك...) */
         
     </style>
 </head>
@@ -141,7 +140,7 @@
                     
                     <h3 id="faceStatusText" style="font-weight: 800; color: var(--primary); font-size: 18px; min-height: 27px; margin-bottom: 15px;">جاري التشغيل...</h3>
                     
-                    <button onclick="cancelFaceAuth()" class="btn-secondary" style="background: #fef2f2; color: #b91c1c; border-color: #fecaca;">
+                    <button onclick="cancelAuth()" class="btn-secondary" style="background: #fef2f2; color: #b91c1c; border-color: #fecaca;">
                         إلغاء العملية <i class="fa-solid fa-arrow-right-from-bracket fa-flip-horizontal"></i>
                     </button>
 
@@ -314,21 +313,30 @@
                 videoEl.srcObject = stream;
                 statusText.innerText = "اثبت مكانك تماماً.. لا تتحرك";
                 
-                // بدء مؤقت المهلة الإجبارية (Filter Mode)
-                faceCheckTimeoutTimer = setTimeout(() => {
-                    if(faceCheckInterval) clearInterval(faceCheckInterval);
+                // 🚨 التعديل الحاسم: الانتظار حتى يصبح الفيديو جاهزاً للقراءة
+                videoEl.onloadeddata = () => {
+                    statusText.innerText = "جاري الكشف عن الوجه...";
                     
-                    document.getElementById('faceStatusText').innerText = "⚠️ انتهت مهلة التحقق! جاري المتابعة...";
-                    document.getElementById('camBorder').className = "cam-wrapper status-err";
-                    document.getElementById('filterResultDisplay').innerText = "النتيجة: فشل (Timeout)";
-                    
-                    submitFinalData(); // المتابعة الإجبارية
-                }, CONFIG.MAX_FACE_CHECK_TIME_SEC * 1000);
+                    // بدء مؤقت المهلة الإجبارية (Filter Mode)
+                    faceCheckTimeoutTimer = setTimeout(() => {
+                        if(faceCheckInterval) clearInterval(faceCheckInterval);
+                        
+                        document.getElementById('faceStatusText').innerText = "⚠️ انتهت مهلة التحقق! جاري المتابعة...";
+                        document.getElementById('camBorder').className = "cam-wrapper status-err";
+                        document.getElementById('filterResultDisplay').innerText = "النتيجة: فشل (Timeout)";
+                        
+                        submitFinalData(); // المتابعة الإجبارية
+                    }, CONFIG.MAX_FACE_CHECK_TIME_SEC * 1000);
 
-                runLivenessCheck();
+                    runLivenessCheck();
+                    videoEl.onloadeddata = null; // إيقاف الحدث بعد التشغيل
+                };
+
+                videoEl.play(); 
+
             } catch (e) {
                 alert("يرجى السماح بصلاحية الكاميرا");
-                cancelFaceAuth();
+                cancelAuth();
             }
         }
 
@@ -405,6 +413,7 @@
             switchScreen('screenDataEntry');
         }
 
+
         // 6. الدالة submitToGoogle() - تم تغيير صيغة الإرسال إلى JSON
         async function submitToGoogle() {
             // (بقية الكود الأصلي)
@@ -439,12 +448,9 @@
             }
         }
         
-        // ----------------------------------------------------
-        // 🚨 الدوال المساعدة الأصلية (من كودك)
-        // ----------------------------------------------------
-        
-        // (تأكد من وجود جميع الدوال الأصلية هنا مثل: resetApplicationState, startProcess, checkPosition, startCountdown, startQrScanner, إلخ)
-        
+        // (تأكد من وجود باقي الدوال المساعدة الأصلية من كودك هنا)
+        // ... (مثل updateUIForMode, startCountdown, startProcess, checkAdminPassword, إلخ)
+
     </script>
 </body>
 </html>
