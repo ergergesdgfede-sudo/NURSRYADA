@@ -1,6 +1,6 @@
 {
   "name": "نظام حضور تمريض الريادة",
-  "short_name": "حضور تمريض",
+  "short_name": "RYADA NURSING",
   "start_url": "./index.html",
   "display": "standalone",
   "background_color": "#0f172a",
@@ -19,4 +19,5 @@
       "type": "image/png"
     }
   ]
+
 }
