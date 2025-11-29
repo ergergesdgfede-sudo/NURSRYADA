@@ -245,6 +245,17 @@
         .modal-overlay { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0, 0, 0, 0.6); z-index: 99999999; display: none; align-items: center; justify-content: center; backdrop-filter: blur(5px); animation: fadeIn 0.3s ease-out; }
         
         .modal-box { background: rgba(255, 255, 255, 0.95); width: 85%; max-width: 320px; padding: 25px; border-radius: 24px; text-align: center; box-shadow: 0 20px 50px rgba(0, 0, 0, 0.2); transform: scale(0.9); animation: popUp 0.3s; }
+        /* تصميم خاص لنافذة الموقع */
+        #locationForceModal .modal-box {
+            border: none;
+            background: rgba(255, 255, 255, 0.98);
+            border-radius: 24px;
+            box-shadow: 0 25px 50px -12px rgba(0,0,0,0.3);
+            max-width: 300px;
+        }
+        #locationForceModal .modal-title { color: #334155; margin-bottom: 5px; }
+        #locationForceModal i { color: #f59e0b !important; font-size: 40px; margin-bottom: 15px; }
+        
         .modal-title { font-size: 18px; font-weight: 900; margin-bottom: 10px; color: var(--text-main); }
         .modal-text { font-size: 13px; color: var(--text-sub); margin-bottom: 20px; }
         .modal-actions { display: flex; gap: 10px; justify-content: center; }
@@ -291,8 +302,7 @@
         #notificationBtn { position: absolute; top: 35px; left: 35px; z-index: 500; width: 50px; height: 50px; border-radius: 50%; background: rgba(255, 255, 255, 0.85); backdrop-filter: blur(10px); display: flex; align-items: center; justify-content: center; box-shadow: 0 5px 15px rgba(0,0,0,0.1); cursor: pointer; color: #64748b; transition: all 0.3s ease; font-size: 22px; }
         #notificationBtn.has-alert { color: #ef4444; background: #fff1f2; animation: pulse-red 2s infinite; }
         
-        #locationForceModal { z-index: 999999999 !important; background: #0f172a; }
-        #locationForceModal .modal-box { border: 2px solid #ef4444; }
+        #locationForceModal { z-index: 999999999 !important; background: rgba(15, 23, 42, 0.9); backdrop-filter: blur(5px); }
 
         #modernConfirmModal { z-index: 2147483647 !important; }
 
@@ -346,10 +356,12 @@
 
     <div id="locationForceModal" class="modal-overlay" style="display:none;">
         <div class="modal-box">
-            <i class="fa-solid fa-location-dot" style="font-size:50px; color:#ef4444; margin-bottom:15px;"></i>
-            <div class="modal-title" style="color:#ef4444;">خدمة الموقع مطلوبة</div>
-            <div class="modal-text">لا يمكن استخدام النظام بدون تفعيل GPS. يرجى تفعيل الموقع والمحاولة مرة أخرى.</div>
-            <button onclick="location.reload()" class="modal-btn btn-confirm">تحديث الصفحة</button>
+            <i class="fa-solid fa-location-dot fa-bounce"></i>
+            <div class="modal-title">تفعيل الموقع</div>
+            <div class="modal-text">يرجى تفعيل خدمة GPS للمتابعة.</div>
+            <button id="btnRetryLocation" onclick="retryGPS()" class="modal-btn btn-main" style="margin-bottom:0;">
+                تفعيل / تحقق
+            </button>
         </div>
     </div>
 
@@ -870,9 +882,7 @@
 
     <script>
         const CONFIG = {
-            // *** رابط السكربت الجديد الذي أرسلته لك ***
             sheetApiUrl: "https://script.google.com/macros/s/AKfycbz5ywIwwwwVOEYSwA7Ldgxq-kkbpMBPJ6mnR-cvB5K2BzMXrXgw5Z-6rkMSDniW8qtI/exec",
-            // رابط شيت الهوية (كما هو)
             identitySheetUrl: "https://script.google.com/macros/s/AKfycbwBkId1lGwoHfuX6VrHSgqGOyDuYQ5rpMRDjP8Ysew_q34H3LvBHtiDzY8rBnFe6aB4WQ/exec",
             adminPassword: "RYADA",
             gps: { targetLat: 30.438418189773845, targetLong: 30.836747001552258, allowedDistanceKm: 1.5 },
@@ -888,27 +898,17 @@
         let cachedReportData = [];
         let systemAlerts = [];
 
-        // استعادة التنبيهات
         try {
             const savedAlerts = localStorage.getItem(ALERT_STORAGE_KEY);
             if (savedAlerts) systemAlerts = JSON.parse(savedAlerts);
         } catch (e) {}
 
-        // استعادة قاعدة البيانات المحلية
         const savedDB = localStorage.getItem(LOCAL_STORAGE_DB_KEY);
         if (savedDB) {
             try { studentsDB = JSON.parse(savedDB); } catch(e) {}
         }
 
-        // جلب الأسماء من الشيت الجديد (بدون Action يجلب الأسماء)
-        fetch(CONFIG.sheetApiUrl)
-            .then(r => r.json())
-            .then(d => { 
-                if(!d.error) { 
-                    studentsDB = d; 
-                    localStorage.setItem(LOCAL_STORAGE_DB_KEY, JSON.stringify(d)); 
-                } 
-            }).catch(e => console.log("DB Fetch Error"));
+        fetch(CONFIG.sheetApiUrl).then(r => r.json()).then(d => { if(!d.error) { studentsDB = d; localStorage.setItem(LOCAL_STORAGE_DB_KEY, JSON.stringify(d)); } }).catch(e => console.log("DB Fetch Error"));
 
         let defaultSubjects = {
             "first_year": ["تمريض بالغين 1 نظرى", "تمريض بالغين 1 عملى", "اناتومى نظرى", "اناتومى عملى", "تقييم صحى نظرى", "تقييم صحى عملى", "مصطلحات طبية", "فسيولوجى", "تكنولوجيا المعلومات"],
@@ -926,10 +926,8 @@
         const TEMP_ID_KEY = "temp_student_id";
         const TEMP_CODE_KEY = "temp_session_code";
         
-        // --- STRICT ATTEMPTS LOGIC (3 ATTEMPTS - RESET DAILY) ---
+        // --- LOGIC FOR STRICT ATTEMPTS (RESET DAILY) ---
         const MAX_ATTEMPTS = 3;
-        // Key changes every day to reset automatically
-        // استخدام toLocaleDateString('en-GB') لضمان أن المفتاح دائمًا بالأرقام الإنجليزية
         const TODAY_DATE_KEY = new Date().toLocaleDateString('en-GB').replace(/\//g, '-');
         const ATTEMPTS_KEY = "strict_attempts_" + TODAY_DATE_KEY;
         const BAN_KEY = "daily_ban_" + TODAY_DATE_KEY;
@@ -1029,12 +1027,8 @@
             }
         }
 
-        // --- UPDATED ALERT SYSTEM WITH SECURITY DETAILS & BAN LOGIC ---
         function updateNotificationUI(data) {
             if (data.isRepeat || data.isFar || data.risk_level) {
-                
-                // --- IMMEDIATE BAN ON DUPLICATE/CHEAT ---
-                // إذا تم اكتشاف غش أو تكرار، يتم الحظر النهائي فوراً
                 if (data.risk_level === "DEVICE_SHARING" || data.risk_level === "DUPLICATE_ENTRY" || data.isRepeat || data.risk_level === "FACE_SPOOF") {
                     localStorage.setItem(BAN_KEY, "true"); 
                 }
@@ -1057,8 +1051,8 @@
                 }
 
                 const now = new Date();
-                const timeString = now.toLocaleTimeString('en-US'); // Force English Time
-                const dateString = now.toLocaleDateString('en-GB'); // Force English Date
+                const timeString = now.toLocaleTimeString('en-US');
+                const dateString = now.toLocaleDateString('en-GB');
 
                 const newAlert = {
                     name: attendanceData.name || 'مجهول',
@@ -1141,7 +1135,6 @@
             }
         }
 
-        // --- MODERN DELETE CONFIRMATION ---
         function openDeleteAlertsConfirm() {
             if (sessionStorage.getItem(DOCTOR_MODE_KEY) === 'true') {
                 document.getElementById('deleteAlertsConfirmModal').style.display = 'flex';
@@ -1157,7 +1150,6 @@
                 checkStoredAlerts(); 
                 closeDeleteAlertsConfirm();
                 closeIdentityAlert(); 
-                showToast("تم مسح التنبيهات بنجاح", 3000, "#10b981");
             }
         }
         
@@ -1225,35 +1217,43 @@
             return Math.max(0, MAX_ATTEMPTS - used); 
         }
         function decrementAttempts() { 
+            if (!processIsActive && sessionStorage.getItem(DOCTOR_MODE_KEY) !== 'true') return getAttemptsLeft();
+
             let used = parseInt(localStorage.getItem(ATTEMPTS_KEY) || "0"); 
-            // إذا لم يتم تجاوز الحد الأقصى، نخصم محاولة
             if (used < MAX_ATTEMPTS) {
                 used++; 
                 localStorage.setItem(ATTEMPTS_KEY, used.toString()); 
                 updateUIForAttempts(); 
                 
-                // إذا وصلت المحاولات إلى الحد الأقصى (3)، يتم الحظر النهائي
                 if (used >= MAX_ATTEMPTS) {
                     localStorage.setItem(BAN_KEY, "true");
                 }
             }
+            processIsActive = false;
             return MAX_ATTEMPTS - used; 
         }
         function updateUIForAttempts() { 
-            const left = getAttemptsLeft(); 
+            // Re-read strictly from storage to ensure sync
+            const used = parseInt(localStorage.getItem(ATTEMPTS_KEY) || "0");
+            const left = Math.max(0, MAX_ATTEMPTS - used);
             const container = document.getElementById('attemptsHeartsContainer');
             if(container) {
                 container.innerHTML = '';
                 for(let i=0; i<MAX_ATTEMPTS; i++) {
                     const icon = document.createElement('i'); icon.className = 'fa-solid fa-heart heart-icon';
-                    if(i >= left) icon.classList.add('lost'); container.appendChild(icon);
+                    // Visual Logic: If I have 2 left (used=1), then i=0,1 (Hearts), i=2 (Lost)
+                    // If MAX=3, Used=1, Left=2
+                    // i=0 < 2 ? True (Heart)
+                    // i=1 < 2 ? True (Heart)
+                    // i=2 < 2 ? False (Lost)
+                    if(i >= left) icon.classList.add('lost'); 
+                    container.appendChild(icon);
                 }
             }
         }
 
         window.history.pushState(null, null, window.location.href);
         window.onpopstate = function () {
-            // Trigger Penalty on Back Button
             if (processIsActive && sessionStorage.getItem(DOCTOR_MODE_KEY) !== 'true') { 
                 decrementAttempts();
                 checkBanStatus();
@@ -1264,7 +1264,6 @@
         };
         
         function handleStrictPenalty() {
-             // If process is active and user tries to leave/refresh/close -> Deduct attempt
              if (processIsActive && sessionStorage.getItem(DOCTOR_MODE_KEY) !== 'true') {
                 decrementAttempts();
             }
@@ -1278,7 +1277,7 @@
             if (document.visibilityState === 'hidden') {
                 if (processIsActive && sessionStorage.getItem(DOCTOR_MODE_KEY) !== 'true') { 
                     decrementAttempts(); 
-                    location.reload(); // Reload to enforce visual penalty
+                    location.reload(); 
                 }
                 releaseWakeLock();
             } else { if(processIsActive) requestWakeLock(); }
@@ -1317,6 +1316,10 @@
             allSections.forEach(el => { if (el.classList.contains('active')) el.classList.remove('active'); });
             nextScreen.classList.add('active');
             updateHeaderState(id);
+            
+            // Force update UI for attempts on every screen switch to keep hearts synced
+            updateUIForAttempts(); 
+            
             const adminBack = document.getElementById('adminFloatingBack');
             const isAdmin = sessionStorage.getItem(DOCTOR_MODE_KEY) === 'true';
             if (isAdmin && id !== 'screenWelcome' && id !== 'screenAdminLogin') { adminBack.style.display = 'flex'; } else { adminBack.style.display = 'none'; }
@@ -1331,9 +1334,8 @@
             document.getElementById('hallSearchInput').addEventListener('input', function(e) { renderHallOptions(e.target.value); });
             setInterval(() => {
                 const now = new Date();
-                // Force English Time
                 const timeStr = now.toLocaleTimeString('en-US', {hour12: true, hour:'2-digit', minute:'2-digit'});
-                const dateStr = now.toLocaleDateString('en-GB'); // Force English Date
+                const dateStr = now.toLocaleDateString('en-GB'); 
                 const timeEl = document.getElementById('currentTime'); const dateEl = document.getElementById('currentDate');
                 if(timeEl) timeEl.innerText = timeStr; if(dateEl) dateEl.innerText = dateStr;
             }, 1000);
@@ -1876,6 +1878,23 @@
         document.addEventListener('paste', function(e) { e.preventDefault(); showToast('اللصق محظور لأسباب أمنية.', 2000, '#ef4444'); });
         
         if (!isMobileDevice()) { document.getElementById('desktop-blocker').style.display = 'flex'; document.body.style.overflow = 'hidden'; throw new Error("Desktop access denied."); }
-    </script>
+</script>
+    
+    <script>
+        // ===========================================
+        // PWA Service Worker Registration
+        // ===========================================
+        if ('serviceWorker' in navigator) {
+            window.addEventListener('load', () => {
+                navigator.serviceWorker.register('/sw.js', { scope: './' })
+                    .then(registration => {
+                        console.log('ServiceWorker registration successful with scope: ', registration.scope);
+                    })
+                    .catch(err => {
+                        console.error('ServiceWorker registration failed: ', err);
+                    });
+            });
+        }
+    </script> 
 </body>
 </html>
