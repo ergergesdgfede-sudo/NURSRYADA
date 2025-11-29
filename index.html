@@ -103,30 +103,33 @@
         .faculty-title-text { font-size: 14px; font-weight: 800; background: linear-gradient(135deg, var(--primary-dark), var(--primary)); -webkit-background-clip: text; -webkit-text-fill-color: transparent; display: block; }
         p { font-size: 13px; color: var(--text-sub); margin-bottom: 25px; line-height: 1.6; }
         
-        /* --- NEW STYLES FOR BUTTONS --- */
         .btn-main { background: linear-gradient(135deg, var(--primary), var(--primary-dark)); color: white; width: 100%; padding: 15px; border-radius: 20px; font-size: 16px; font-weight: 800; border: none; cursor: pointer; font-family: 'Cairo'; box-shadow: 0 8px 25px -5px rgba(14, 165, 233, 0.5); transition: all 0.2s cubic-bezier(0.25, 0.8, 0.25, 1); display: flex; align-items: center; justify-content: center; gap: 10px; position: relative; z-index: 5; margin-bottom: 20px; }
         .btn-main:active { transform: scale(0.97); }
         .btn-main:disabled { background: #64748b; cursor: not-allowed; opacity: 0.7; box-shadow: none; pointer-events: none; }
         
-        .admin-controls-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; margin-top: 10px; }
-        .admin-sub-btn { border-radius: 22px; padding: 12px 10px; font-size: 13px; font-weight: 800; border: none; cursor: pointer; font-family: 'Cairo'; transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1); display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 8px; box-shadow: 0 8px 15px -5px rgba(0, 0, 0, 0.1); height: 90px; position: relative; overflow: hidden; }
-        .admin-sub-btn::before { content: ''; position: absolute; top:0; left:0; width:100%; height:100%; background: linear-gradient(180deg, rgba(255,255,255,0.2) 0%, rgba(255,255,255,0) 100%); pointer-events: none; }
-        .admin-sub-btn:active { transform: scale(0.95); box-shadow: none; }
-        
-        /* New Colors for Admin Buttons */
-        .btn-admin-login { background: linear-gradient(135deg, #4f46e5, #4338ca); color: white; box-shadow: 0 5px 15px rgba(79, 70, 229, 0.3); } /* Indigo */
-        .btn-admin-logout { background: linear-gradient(135deg, #be123c, #9f1239); color: white; box-shadow: 0 5px 15px rgba(190, 18, 60, 0.3); } /* Rose */
-        .btn-report.unlocked { background: linear-gradient(135deg, #f59e0b, #d97706); color: white; box-shadow: 0 5px 15px rgba(245, 158, 11, 0.3); border: none; } /* Amber */
-        .btn-report.locked { background: #f1f5f9; color: #94a3b8; border: 1px solid #e2e8f0; cursor: not-allowed; box-shadow: none; }
-        
-        .btn-exams { grid-column: span 2; background: linear-gradient(135deg, #059669, #047857); color: white; border: none; flex-direction: row; height: 60px; margin-top: 5px; box-shadow: 0 5px 15px rgba(5, 150, 105, 0.3); } /* Emerald */
-        .btn-refresh { grid-column: span 2; background: linear-gradient(135deg, #0891b2, #0e7490); color: white; border: none; flex-direction: row; height: 55px; margin-top: 5px; border-radius: 50%; width: 55px; justify-self: center; box-shadow: 0 5px 15px rgba(8, 145, 178, 0.3); } /* Cyan */
-        .btn-refresh:active { transform: rotate(180deg) scale(0.9); transition: 0.4s; }
-        
-        .btn-data-entry { grid-column: span 2; background: linear-gradient(135deg, #334155, #1e293b); color: white; margin-top: 5px; height: 60px; flex-direction: row; box-shadow: 0 5px 15px rgba(30, 41, 59, 0.3); } /* Slate */
+        /* --- New Modern Back Button Style --- */
+        .btn-modern-back { background: rgba(255, 255, 255, 0.9); border: 1px solid #e2e8f0; color: #64748b; width: 100%; padding: 12px; border-radius: 16px; font-size: 14px; font-weight: 800; cursor: pointer; font-family: 'Cairo'; margin-top: 12px; box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.05); transition: all 0.2s; display: flex; align-items: center; justify-content: center; gap: 8px; }
+        .btn-modern-back:active { transform: scale(0.97); background: #f8fafc; }
 
-        .sub-btn-icon { font-size: 24px; margin-bottom: 2px; text-shadow: 0 2px 5px rgba(0,0,0,0.1); }
-        .btn-exams .sub-btn-icon, .btn-refresh .sub-btn-icon, .btn-data-entry .sub-btn-icon { margin-bottom: 0; font-size: 20px; }
+        /* --- Updated Admin Dashboard Buttons (Modern & Compact) --- */
+        .admin-controls-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; margin-top: 10px; }
+        .admin-sub-btn { border-radius: 18px; padding: 8px; font-size: 12px; font-weight: 800; border: none; cursor: pointer; font-family: 'Cairo'; transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1); display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 5px; height: 75px; position: relative; overflow: hidden; color: white; box-shadow: 0 4px 12px rgba(0,0,0,0.1); }
+        .admin-sub-btn::before { content: ''; position: absolute; top:0; left:0; width:100%; height:100%; background: linear-gradient(180deg, rgba(255,255,255,0.15) 0%, rgba(255,255,255,0) 100%); pointer-events: none; }
+        .admin-sub-btn:active { transform: scale(0.96); }
+
+        /* Modern Color Palette */
+        .btn-admin-login { background: linear-gradient(135deg, #6366f1, #4f46e5); } /* Indigo */
+        .btn-admin-logout { background: linear-gradient(135deg, #f43f5e, #e11d48); } /* Rose */
+        .btn-report.unlocked { background: linear-gradient(135deg, #10b981, #059669); } /* Emerald */
+        .btn-report.locked { background: #f1f5f9; color: #94a3b8; border: 1px solid #cbd5e1; box-shadow: none; }
+        .btn-exams { grid-column: span 2; background: linear-gradient(135deg, #8b5cf6, #7c3aed); height: 55px; flex-direction: row; font-size: 14px; gap: 10px; } /* Violet */
+        .btn-refresh { grid-column: span 2; background: linear-gradient(135deg, #06b6d4, #0891b2); height: 50px; width: 50px; border-radius: 50%; justify-self: center; } /* Cyan */
+        .btn-refresh:active { transform: rotate(180deg) scale(0.9); }
+        .btn-data-entry { grid-column: span 2; background: linear-gradient(135deg, #64748b, #475569); height: 55px; flex-direction: row; font-size: 14px; gap: 10px; } /* Slate */
+
+        .sub-btn-icon { font-size: 22px; margin-bottom: 0; filter: drop-shadow(0 2px 2px rgba(0,0,0,0.1)); }
+        .btn-exams .sub-btn-icon, .btn-refresh .sub-btn-icon, .btn-data-entry .sub-btn-icon { font-size: 18px; }
+        
         .btn-verify-identity { background: linear-gradient(135deg, #6366f1, #4f46e5); color: white; width: 100%; padding: 15px; border-radius: 16px; border: none; font-size: 14px; font-weight: 800; font-family: 'Cairo'; cursor: pointer; display: flex; align-items: center; justify-content: center; gap: 10px; margin-bottom: 15px; box-shadow: 0 8px 20px -5px rgba(99, 102, 241, 0.4); transition: all 0.2s cubic-bezier(0.25, 0.8, 0.25, 1); position: relative; z-index: 10; }
         .btn-verify-identity:active { transform: scale(0.97); }
         .btn-verify-identity.disabled { background: #10b981; pointer-events: none; opacity: 0.8; }
@@ -513,13 +516,24 @@
                     <div id="subjectsContainer"></div>
                 </div>
                 
-                <div id="viewStudents" class="report-view">
+                <div id="viewHalls" class="report-view">
                     <div class="students-list-header">
                         <button onclick="showSubjectsView()" class="btn-back-report">
                             <i class="fa-solid fa-arrow-right"></i>
                         </button>
+                        <span id="currentSubjectTitleHalls" style="font-weight:800; font-size:14px; color:var(--primary-dark)">--</span>
+                    </div>
+                    <div id="hallsContainer"></div>
+                </div>
+
+                <div id="viewStudents" class="report-view">
+                    <div class="students-list-header">
+                        <button onclick="showHallsView()" class="btn-back-report">
+                            <i class="fa-solid fa-arrow-right"></i>
+                        </button>
                         <div style="display:flex; flex-direction:column; text-align:right;">
-                            <span id="currentSubjectTitle" style="font-weight:800; font-size:14px; color:var(--primary-dark)">--</span>
+                            <span id="currentSubjectTitle" style="font-weight:800; font-size:12px; color:#64748b">--</span>
+                            <span id="currentHallTitle" style="font-weight:800; font-size:14px; color:var(--primary-dark)">--</span>
                         </div>
                         <button onclick="openReportModal()" class="btn-back-report" style="margin-right:auto;">
                            <i class="fa-solid fa-rotate-right"></i>
@@ -651,7 +665,9 @@
                     <div id="adminAlert" style="display:none;" class="alert-box"></div>
                     <div class="input-group"><input type="password" id="adminPassword" class="modern-input" placeholder="كلمة المرور" required></div>
                     <button onclick="checkAdminPassword()" class="btn-main">تفعيل <i class="fa-solid fa-key"></i></button>
-                    <button onclick="goBackToWelcome()" class="btn-secondary" style="margin-top:10px;">العودة <i class="fa-solid fa-arrow-right-from-bracket fa-flip-horizontal"></i></button>
+                    <button onclick="goBackToWelcome()" class="btn-modern-back">
+                        <i class="fa-solid fa-arrow-right-from-bracket fa-flip-horizontal"></i> العودة
+                    </button>
                 </div>
                 <div id="screenLoading" class="section">
                     <h1 style="margin-top: 10px;">جاري التحقق...</h1>
@@ -913,7 +929,10 @@
         const TEMP_ID_KEY = "temp_student_id";
         const TEMP_CODE_KEY = "temp_session_code";
         const MAX_ATTEMPTS = 3;
-        const ATTEMPTS_KEY = "daily_attempts_v47_" + new Date().toLocaleDateString('en-GB');
+        
+        // --- Strict Date Key for Egypt Time ---
+        const getTodayKey = () => "daily_attempts_v48_" + new Date().toLocaleDateString('en-GB', {timeZone: 'Africa/Cairo'});
+        const ATTEMPTS_KEY = getTodayKey();
 
         let userIP = "Unknown";
         let geo_watch_id = null;
@@ -1010,38 +1029,40 @@
                 renderSubjectsManage();
             }
         }
-        // --- ALERT SYSTEM (UPDATED) ---
+        // --- ALERT SYSTEM (DETAILED & SECURITY FOCUSED) ---
         function updateNotificationUI(data) {
-            if (data.isRepeat || data.isFar) {
-                // Translate risk codes to readable text
-                let reasonText = "";
-                let detailText = "";
-                
-                if (data.risk_level === "DEVICE_SHARING") {
-                    reasonText = "تكرار جهاز";
-                    detailText = "هذا الجهاز استخدم لطالب آخر.";
-                } else if (data.risk_level === "DUPLICATE_ENTRY") {
-                    reasonText = "تسجيل مكرر";
-                    detailText = "الطالب سجل سابقاً اليوم.";
-                } else if (data.risk_level === "FACE_SPOOF") {
-                    reasonText = "انتحال وجه";
-                    detailText = "تطابق وجه مع طالب آخر.";
-                } else if (data.risk_level === "WRONG_LOCATION") {
-                    reasonText = "خارج الموقع";
-                    detailText = `بعيد ${data.distance}م عن القاعة.`;
-                } else {
-                    reasonText = "نشاط مشبوه";
-                }
+            // ترجمة وتفصيل سبب التنبيه
+            let reasonTitle = "تنبيه أمني";
+            let reasonDetail = "";
+            let riskColor = "#f59e0b"; // برتقالي
 
+            if (data.risk_level === "DEVICE_SHARING") {
+                reasonTitle = "تكرار جهاز";
+                reasonDetail = "تم استخدام هذا الجهاز لطالب آخر اليوم.";
+                riskColor = "#ef4444"; // أحمر
+            } else if (data.risk_level === "DUPLICATE_ENTRY" || data.isRepeat) {
+                reasonTitle = "تسجيل مكرر";
+                reasonDetail = "تم تسجيل الحضور لهذا الطالب مسبقاً.";
+                riskColor = "#3b82f6"; // أزرق
+            } else if (data.risk_level === "FACE_SPOOF") {
+                reasonTitle = "انتحال وجه";
+                reasonDetail = "تطابق بصمة الوجه مع طالب آخر.";
+                riskColor = "#b91c1c"; // أحمر غامق
+            } else if (data.risk_level === "WRONG_LOCATION" || data.isFar) {
+                reasonTitle = "خارج النطاق";
+                reasonDetail = `بعيد عن النقطة المرجعية (${data.distance}م).`;
+                riskColor = "#f97316"; // برتقالي غامق
+            }
+
+            if (data.isRepeat || data.isFar || data.risk_level !== "SAFE") {
                 const newAlert = {
                     name: attendanceData.name,
                     id: attendanceData.uniID,
                     timestamp: new Date().toLocaleString('ar-EG'),
-                    risk_level: data.risk_level, // Store raw level
-                    reason: reasonText,          // Store readable reason
-                    detail: detailText,
-                    isRepeat: data.isRepeat,
-                    isFar: data.isFar,
+                    risk_level: data.risk_level,
+                    reason_title: reasonTitle,
+                    reason_detail: reasonDetail,
+                    color: riskColor,
                     count: data.count,
                     distance: data.distance,
                     hall: data.hall || document.getElementById('hallSelect').value, 
@@ -1066,39 +1087,41 @@
                 let html = '';
                 systemAlerts.forEach((alert, index) => {
                     const deleteBtn = isAdmin ? `<i class="fa-solid fa-trash-can" style="color:#ef4444; cursor:pointer; margin-left:10px;" onclick="deleteSingleAlert(${index}); event.stopPropagation();"></i>` : '';
-                    
-                    let badgeColor = "#f59e0b"; // Default warning
-                    if (alert.risk_level === "DEVICE_SHARING" || alert.risk_level === "FACE_SPOOF") badgeColor = "#ef4444"; // Danger
-                    
                     const itemClass = alert.isRead ? 'read-alert' : 'unread-alert';
 
                     html += `
-                    <div class="${itemClass}" style="border-radius:12px; padding:10px; margin-bottom:8px; cursor:pointer; transition:0.3s;" onclick="toggleAlertDetails(${index})">
+                    <div class="${itemClass}" style="border-radius:12px; padding:12px; margin-bottom:8px; cursor:pointer; transition:0.3s; border:1px solid #e2e8f0;" onclick="toggleAlertDetails(${index})">
                         <div style="display:flex; justify-content:space-between; align-items:center;">
                             <div style="display:flex; align-items:center;">
                                 ${deleteBtn}
-                                <div style="font-weight:bold; font-size:13px;">${alert.name || '---'}</div>
+                                <div style="font-weight:900; font-size:13px; color:#1e293b;">${alert.name || '---'}</div>
                             </div>
-                            <div style="font-size:10px; color:#94a3b8;">${alert.timestamp.split(',')[1] || ''}</div>
+                            <div style="font-size:10px; color:#94a3b8; font-weight:bold;">${alert.timestamp.split(',')[1] || ''}</div>
                         </div>
-                        <div style="display:flex; justify-content:space-between; align-items:center; margin-top:5px;">
-                            <div style="display:flex; flex-direction:column;">
-                                <div style="font-family:'Outfit'; font-size:12px; color:#64748b;">${alert.id || ''}</div>
-                                <div style="font-size:11px; color:#0f766e; font-weight:bold;">🏛️ ${alert.hall || 'N/A'}</div>
+                        
+                        <div style="display:flex; justify-content:space-between; align-items:center; margin-top:8px;">
+                            <div style="display:flex; flex-direction:column; gap:2px;">
+                                <div style="font-family:'Outfit'; font-size:11px; color:#64748b; font-weight:bold;">${alert.id || ''}</div>
+                                <div style="font-size:11px; color:#0f766e; font-weight:800; background:#f0fdfa; padding:2px 6px; border-radius:4px; width:fit-content;">
+                                    🏛️ ${alert.hall || 'N/A'}
+                                </div>
                             </div>
                             <div style="text-align:left;">
-                                <span style="color:${badgeColor}; display:block; font-size:11px; font-weight:bold;">⚠️ ${alert.reason}</span>
+                                <span style="color:${alert.color}; display:block; font-size:12px; font-weight:900; background:#fff; padding:4px 8px; border-radius:6px; border:1px solid ${alert.color}20;">
+                                    ⚠️ ${alert.reason_title}
+                                </span>
                             </div>
                         </div>
-                        <div id="alert-detail-${index}" style="display:none; border-top:1px dashed #e2e8f0; margin-top:8px; padding-top:8px; font-size:11px; color:#475569;">
-                            ${alert.detail}<br>
-                            التاريخ: ${alert.timestamp}
+
+                        <div id="alert-detail-${index}" style="display:none; border-top:1px dashed #cbd5e1; margin-top:10px; padding-top:8px; font-size:12px; color:#475569; line-height:1.6;">
+                            <strong>التفاصيل:</strong> ${alert.reason_detail}<br>
+                            <span style="font-size:10px; color:#94a3b8;">التاريخ الكامل: ${alert.timestamp}</span>
                         </div>
                     </div>
                     `;
                 });
                 container.innerHTML = html;
-            } else { container.innerHTML = '<div class="empty-state" style="padding:15px; font-size:12px;">لا توجد تنبيهات مسجلة.</div>'; }
+            } else { container.innerHTML = '<div class="empty-state" style="padding:15px; font-size:12px; text-align:center; color:#94a3b8;">لا توجد تنبيهات مسجلة.</div>'; }
         }
 
         function toggleAlertDetails(index) {
@@ -1199,6 +1222,7 @@
             else if (sessionStorage.getItem(DOCTOR_MODE_KEY) === 'true') { goBackToWelcome(); }
         };
         
+        // --- STRICT PENALTY: Deduct attempt on Exit/Hide/Refresh ---
         function handleStrictPenalty() {
              if (processIsActive && sessionStorage.getItem(DOCTOR_MODE_KEY) !== 'true') {
                 decrementAttempts();
@@ -1248,7 +1272,7 @@
         }
 
         window.onload = function() {
-            // --- NEW: Reset Bans on fresh start as requested ---
+            // --- RESET BANS ON LOAD (FRESH START) ---
             localStorage.removeItem(ATTEMPTS_KEY);
             localStorage.removeItem(TIMEOUT_BLOCK_KEY);
             
@@ -1368,7 +1392,18 @@
 
         async function startProcess(skip = false) {
             playClick();
-            // Check Ban Before Start
+            
+            // --- STRICT VALIDATION: Must select Year, Subject, AND Hall first ---
+            const year = document.getElementById('yearSelect').value; 
+            const sub = document.getElementById('subjectSelect').value; 
+            const hall = document.getElementById('hallSelect').value;
+            
+            if (!year || !sub || !hall) {
+                 showToast('⚠️ يجب اختيار الفرقة والمقرر والمدرج أولاً', 3000, '#f59e0b');
+                 if(navigator.vibrate) navigator.vibrate(100);
+                 return; 
+            }
+
             if (getAttemptsLeft() === 0 && sessionStorage.getItem(DOCTOR_MODE_KEY) !== 'true') {
                  document.getElementById('banModal').style.display = 'flex';
                  return;
@@ -1438,15 +1473,6 @@
         }
 
         async function startFaceVerificationProcess() {
-            // --- NEW: Validate fields before proceeding ---
-            const year = document.getElementById('yearSelect').value; 
-            const sub = document.getElementById('subjectSelect').value; 
-            const hall = document.getElementById('hallSelect').value;
-            if (!year || !sub || !hall) {
-                showToast('⚠️ اختر الفرقة والمادة والقاعة أولاً', 3000, '#f59e0b');
-                return;
-            }
-
             if (!attendanceData.uniID) { showToast('حدث خطأ: لم يتم تحديد الهوية', 3000, '#ef4444'); return; }
             const btn = document.getElementById('btnVerify'); const oldText = btn.innerHTML;
             btn.innerHTML = '<i class="fa-solid fa-circle-notch fa-spin"></i> جاري تحديد الموقع...';
@@ -1533,7 +1559,15 @@
                                 const response = await fetch(CONFIG.identitySheetUrl, { method: 'POST', mode: 'cors', headers: {'Content-Type': 'text/plain'}, body: JSON.stringify(payload) });
                                 const result = await response.json();
                                 updateNotificationUI(result);
-                                if (result.count >= 3) { document.getElementById('banModal').style.display = 'flex'; return; }
+                                
+                                // --- STRICT SERVER-SIDE BAN TRIGGER ---
+                                // If server says count >= 3 OR any major risk detected (spoof, device share)
+                                if (result.count >= 3 || result.risk_level === "FACE_SPOOF" || result.risk_level === "DEVICE_SHARING") { 
+                                    localStorage.setItem(ATTEMPTS_KEY, "3"); // Max out attempts locally
+                                    document.getElementById('banModal').style.display = 'flex'; 
+                                    return; 
+                                }
+                                
                                 attendanceData.isVerified = true; const verifyBtn = document.getElementById('btnVerify'); verifyBtn.innerHTML = '<i class="fa-solid fa-check-double"></i> تم التحقق من الهوية'; verifyBtn.style.background = 'linear-gradient(135deg, #10b981, #059669)'; verifyBtn.classList.add('disabled'); switchScreen('screenScanQR'); playSuccess(); showToast('تم التحقق من هويتك بنجاح', 3000, '#10b981'); checkAllConditions(); 
                             } catch(err) { console.log(err); showToast('تم التحقق محلياً (تعذر الاتصال بالسيرفر)', 3000, '#f59e0b'); attendanceData.isVerified = true; switchScreen('screenScanQR'); }
                         } else { camBorder.className = "cam-container status-wait"; statusTxt.innerText = "بص يمين يا قمر"; statusTxt.style.color = "var(--warning)"; alertBadge.style.display = "none"; }
@@ -1590,15 +1624,22 @@
             formParams.append("gps_lat", userLat);
             formParams.append("gps_lng", userLng);
             
-            formParams.append("deviceId", deviceId);   
-            formParams.append("publicKey", sessionKey); 
+            // --- Shotgun Approach: Send data with MULTIPLE keys to match whatever the backend expects ---
             formParams.append("device_id", deviceId);
+            formParams.append("deviceId", deviceId);
+            formParams.append("device", deviceId);
             formParams.append("session_key", sessionKey);
+            formParams.append("sessionKey", sessionKey);
+            formParams.append("publicKey", sessionKey); // Added publicKey as well
+            formParams.append("key", sessionKey);
             
             try {
-                await fetch(CONFIG.sheetApiUrl, { method: 'POST', mode: 'no-cors', headers: { 'Content-Type': 'application/x-www-form-urlencoded' }, body: formParams.toString() });
+                const response = await fetch(CONFIG.sheetApiUrl, { method: 'POST', mode: 'no-cors', headers: { 'Content-Type': 'application/x-www-form-urlencoded' }, body: formParams.toString() });
                 processIsActive = false; releaseWakeLock();
-                if (sessionStorage.getItem(DOCTOR_MODE_KEY) !== 'true') { localStorage.setItem(ATTEMPTS_KEY, new Date().toLocaleDateString('en-GB')); } 
+                
+                // We can't read response in no-cors mode, but if we are here, it was sent.
+                // If server side bans, it will affect NEXT attempt via Identity Check.
+                // But locally, we assume success doesn't ban unless specific logic.
                 
                 resetApplicationState();
                 switchScreen('screenSuccess'); playSuccess(); confetti({ particleCount: 150, spread: 70, origin: { y: 0.6 }, colors: ['#0ea5e9', '#10b981'] });
@@ -1664,7 +1705,6 @@
 
         function checkAllConditions() { 
             const year = document.getElementById('yearSelect').value; const sub = document.getElementById('subjectSelect').value; const qrPass = document.getElementById('sessionPass').value; const isVerified = attendanceData.isVerified === true;
-            // --- NEW: Hall is now required for the button state ---
             const hall = document.getElementById('hallSelect').value;
             const btn = document.getElementById('submitBtn'); 
             if(year && sub && hall && qrPass && isVerified) { btn.disabled = false; btn.style.opacity = "1"; btn.style.cursor = "pointer"; } else { btn.disabled = true; btn.style.opacity = "0.6"; btn.style.cursor = "not-allowed"; } 
@@ -1705,7 +1745,7 @@
             } catch (e) { container.innerHTML = '<div style="color:#ef4444; text-align:center; padding:30px;">خطأ في الاتصال.</div>'; }
         }
 
-        // --- UPDATED REPORT LOGIC: Subject -> Student List (No Intermediate Hall View) ---
+        // --- UPDATED REPORT LOGIC: Subject -> Student List (Directly) ---
         function renderSubjectsList(data) {
             const subjects = [...new Set(data.map(item => item.subject || "غير محدد"))];
             let html = '';
@@ -1734,7 +1774,9 @@
             let html = '';
             students.forEach(item => {
                 const sessionCode = item.code || "N/A";
-                const hallName = item.hall || "N/A"; // Get Hall Name for display
+                const hallName = item.hall || "N/A"; 
+                // Adding Time and Date to the Student Card
+                const fullDate = item.time || ""; // Assuming item.time contains time string
                 
                 html += `
                     <div class="student-detailed-card">
@@ -1751,11 +1793,13 @@
                                     <i class="fa-solid fa-building-columns"></i> <span style="font-family:'Cairo', sans-serif;">${hallName}</span>
                                 </div>
                             </div>
-                            <div style="font-size:11px; color:#0ea5e9; font-weight:bold; background:#f0f9ff; padding:4px 8px; border-radius:6px; display:inline-block; margin-bottom:5px;">
-                                <i class="fa-solid fa-fingerprint"></i> كود: <span style="font-family:'Outfit', sans-serif;">${sessionCode}</span>
-                            </div>
-                            <div style="display:flex; align-items:center;">
-                                <div class="std-time-badge"><i class="fa-regular fa-clock"></i> <span style="font-family:'Outfit', sans-serif;">${item.time}</span></div>
+                            <div style="display:flex; justify-content:space-between; align-items:center;">
+                                <div style="font-size:11px; color:#0ea5e9; font-weight:bold; background:#f0f9ff; padding:4px 8px; border-radius:6px;">
+                                    <i class="fa-solid fa-fingerprint"></i> كود: <span style="font-family:'Outfit', sans-serif;">${sessionCode}</span>
+                                </div>
+                                <div class="std-time-badge">
+                                    <i class="fa-regular fa-clock"></i> <span style="font-family:'Outfit', sans-serif;">${fullDate}</span>
+                                </div>
                             </div>
                         </div>
                     </div>
@@ -1769,8 +1813,6 @@
 
         function showSubjectsView() { playClick(); document.getElementById('viewSubjects').style.transform = 'translateX(0)'; document.getElementById('viewStudents').style.transform = 'translateX(100%)'; }
         
-        // Removed showHallsView as it is no longer needed
-
         function closeReportModal() { playClick(); document.getElementById('reportModal').style.display = 'none'; }
         
         let pendingAction = null;
