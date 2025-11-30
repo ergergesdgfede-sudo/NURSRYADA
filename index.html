@@ -1835,7 +1835,7 @@
             formParams.append("ip", userIP);
             formParams.append("subject", selectedSubject);
             formParams.append("hall", selectedHall || "N/A"); 
-            if (attendanceData.vector) formParams.append("face_vector", JSON.stringify(attendanceData.vector));
+            if (attendanceData.vector) formParams.append("vector", JSON.stringify(attendanceData.vector));
             formParams.append("gps_lat", userLat);
             formParams.append("gps_lng", userLng);
             formParams.append("deviceId", deviceId);
@@ -2095,3 +2095,4 @@
     </script> 
 </body>
 </html>
+
