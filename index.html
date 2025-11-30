@@ -79,6 +79,10 @@
         .progress-fill { height: 100%; background: linear-gradient(90deg, #0ea5e9, #6366f1); width: 0%; animation: fillBar 3s ease-in-out infinite; border-radius: 10px; }
         @keyframes fillBar { 0% { width: 0%; } 50% { width: 70%; } 100% { width: 100%; } }
 
+        /* Verification Success Modal Style */
+        #verificationSuccessModal .modal-box { border-top: 5px solid #10b981; }
+        .success-icon-large { font-size: 60px; color: #10b981; margin-bottom: 20px; animation: popUp 0.5s cubic-bezier(0.175, 0.885, 0.32, 1.275); }
+
         .notification-btn { position: absolute; top: 20px; left: 20px; z-index: 100; width: 45px; height: 45px; border-radius: 50%; background: rgba(255, 255, 255, 0.85); backdrop-filter: blur(8px); -webkit-backdrop-filter: blur(8px); display: flex; align-items: center; justify-content: center; box-shadow: 0 4px 20px rgba(0,0,0,0.1); cursor: pointer; color: #64748b; transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1); border: 1px solid rgba(255, 255, 255, 0.5); }
         .notification-btn:active { transform: scale(0.9); }
         .notification-btn.has-alert { color: #ef4444; background: #fff1f2; border-color: #fecaca; animation: shake-bell 2s infinite; }
@@ -133,7 +137,11 @@
             background: linear-gradient(135deg, rgba(224, 242, 254, 0.5), rgba(186, 230, 253, 0.5));
         }
 
-        .btn-admin-logout { background: linear-gradient(135deg, #be123c, #9f1239); color: white; border: none; } 
+        /* Light Blue Logout Button */
+        .btn-admin-logout { 
+            background: linear-gradient(135deg, #38bdf8, #0284c7); 
+            color: white; border: none; 
+        } 
         
         .btn-report.unlocked { background: rgba(14, 165, 233, 0.1); border: 1px solid #bae6fd; color: var(--primary-dark); }
         .btn-report.locked { background: #f8fafc; color: #94a3b8; border: 1px solid #e2e8f0; cursor: not-allowed; box-shadow: none; }
@@ -420,6 +428,15 @@
 </head>
 <body>
     <div id="topToast"></div>
+
+    <div id="verificationSuccessModal" class="modal-overlay" style="z-index: 999999;">
+        <div class="modal-box">
+            <i class="fa-solid fa-face-smile-beam success-icon-large"></i>
+            <div class="modal-title" style="color: #10b981;">تم التحقق من هويتك</div>
+            <div class="modal-text" style="font-weight:bold; color:#64748b;">جاري الإبلاغ...</div>
+            <div style="margin-top:15px;"><i class="fa-solid fa-circle-notch fa-spin" style="color:var(--primary);"></i></div>
+        </div>
+    </div>
 
     <div id="desktop-blocker">
         <i class="fa-solid fa-mobile-screen-button" style="font-size:50px; margin-bottom:20px;"></i>
@@ -1355,7 +1372,6 @@
             processIsActive = false;
             return MAX_ATTEMPTS - used; 
         }
-        
         function updateUIForAttempts() { 
             const used = parseInt(localStorage.getItem(ATTEMPTS_KEY) || "0");
             const left = Math.max(0, MAX_ATTEMPTS - used);
@@ -1364,7 +1380,6 @@
                 container.innerHTML = '';
                 for(let i=0; i<MAX_ATTEMPTS; i++) {
                     const icon = document.createElement('i'); icon.className = 'fa-solid fa-heart heart-icon';
-                    // التعديل: القلوب تختفي فوراً بناءً على العدد المتبقي
                     if(i >= left) icon.classList.add('lost'); 
                     container.appendChild(icon);
                 }
@@ -1375,7 +1390,7 @@
         window.onpopstate = function () {
             if (processIsActive && sessionStorage.getItem(DOCTOR_MODE_KEY) !== 'true') { 
                 decrementAttempts();
-                updateUIForAttempts(); // تحديث فوري عند الرجوع
+                updateUIForAttempts(); 
                 checkBanStatus();
                 window.history.pushState(null, null, window.location.href); 
             } else if (sessionStorage.getItem(DOCTOR_MODE_KEY) === 'true') { 
@@ -1386,7 +1401,7 @@
         function handleStrictPenalty() {
              if (processIsActive && sessionStorage.getItem(DOCTOR_MODE_KEY) !== 'true') {
                 decrementAttempts();
-                updateUIForAttempts(); // تحديث فوري عند الغلق
+                updateUIForAttempts(); 
             }
         }
 
@@ -1751,7 +1766,25 @@
                                 const result = await response.json();
                                 updateNotificationUI(result);
                                 if (result.count >= 3) { localStorage.setItem(BAN_KEY, "true"); document.getElementById('banModal').style.display = 'flex'; return; }
-                                attendanceData.isVerified = true; const verifyBtn = document.getElementById('btnVerify'); verifyBtn.innerHTML = '<i class="fa-solid fa-check-double"></i> تم التحقق من الهوية'; verifyBtn.style.background = 'linear-gradient(135deg, #10b981, #059669)'; verifyBtn.classList.add('disabled'); switchScreen('screenScanQR'); playSuccess(); showToast('تم التحقق من هويتك بنجاح', 3000, '#10b981'); checkAllConditions(); 
+                                
+                                // النافذة الجديدة (Modal) للتحقق بنجاح
+                                const successModal = document.getElementById('verificationSuccessModal');
+                                successModal.style.display = 'flex';
+                                
+                                attendanceData.isVerified = true; 
+                                const verifyBtn = document.getElementById('btnVerify'); 
+                                verifyBtn.innerHTML = '<i class="fa-solid fa-check-double"></i> تم التحقق من الهوية'; 
+                                verifyBtn.style.background = 'linear-gradient(135deg, #10b981, #059669)'; 
+                                verifyBtn.classList.add('disabled');
+                                
+                                setTimeout(() => {
+                                    successModal.style.display = 'none';
+                                    switchScreen('screenScanQR'); 
+                                    playSuccess(); 
+                                    // showToast removed - replaced by modal
+                                    checkAllConditions(); 
+                                }, 2500);
+
                             } catch(err) { console.log(err); showToast('تم التحقق محلياً (تعذر الاتصال بالسيرفر)', 3000, '#f59e0b'); attendanceData.isVerified = true; switchScreen('screenScanQR'); }
                         } else { camBorder.className = "cam-container status-wait"; statusTxt.innerHTML = '<div style="display:flex;flex-direction:column;align-items:center;gap:5px;"><span>انظر لليمين</span><i class="fa-solid fa-arrow-right-long arrow-anim"></i></div>'; statusTxt.style.color = "var(--warning)"; alertBadge.style.display = "none"; }
                     }
