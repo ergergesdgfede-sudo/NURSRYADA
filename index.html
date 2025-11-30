@@ -66,6 +66,19 @@
         .hero-icon-wrapper.show-icon .status-icon-container { opacity: 1; transform: scale(1); }
         @keyframes float-magic { 0% { transform: translateY(0); } 100% { transform: translateY(-12px); } }
         
+        /* New Top Toast Style */
+        #topToast { position: fixed; top: -100px; left: 50%; transform: translateX(-50%); background: white; padding: 12px 25px; border-radius: 30px; box-shadow: 0 10px 30px rgba(0,0,0,0.2); z-index: 999999; transition: top 0.5s cubic-bezier(0.68, -0.55, 0.26, 1.55); font-weight: bold; color: #10b981; display: flex; align-items: center; gap: 10px; border: 1px solid #e2e8f0; }
+        #topToast.show { top: 20px; }
+
+        /* Animation for Right Arrow */
+        .arrow-anim { font-size: 20px; color: var(--warning); animation: moveRight 0.8s infinite alternate; }
+        @keyframes moveRight { from { transform: translateX(0); } to { transform: translateX(8px); } }
+
+        /* Horizontal Progress Bar */
+        .progress-container { width: 80%; background-color: #e2e8f0; border-radius: 10px; margin: 15px auto; height: 8px; overflow: hidden; }
+        .progress-fill { height: 100%; background: linear-gradient(90deg, #0ea5e9, #6366f1); width: 0%; animation: fillBar 3s ease-in-out infinite; border-radius: 10px; }
+        @keyframes fillBar { 0% { width: 0%; } 50% { width: 70%; } 100% { width: 100%; } }
+
         .notification-btn { position: absolute; top: 20px; left: 20px; z-index: 100; width: 45px; height: 45px; border-radius: 50%; background: rgba(255, 255, 255, 0.85); backdrop-filter: blur(8px); -webkit-backdrop-filter: blur(8px); display: flex; align-items: center; justify-content: center; box-shadow: 0 4px 20px rgba(0,0,0,0.1); cursor: pointer; color: #64748b; transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1); border: 1px solid rgba(255, 255, 255, 0.5); }
         .notification-btn:active { transform: scale(0.9); }
         .notification-btn.has-alert { color: #ef4444; background: #fff1f2; border-color: #fecaca; animation: shake-bell 2s infinite; }
@@ -321,16 +334,8 @@
             cursor: pointer; color: #94a3b8; font-weight: bold; border: none;
         }
         
-        .uni-watermark { 
-            position: absolute; bottom: 0; left: 0; width: 100%; height: 320px; 
-            background: url('https://a.top4top.io/p_36115ao3o1.jpg') no-repeat center bottom; 
-            background-size: cover; 
-            opacity: 0.85; 
-            pointer-events: none; z-index: 0; 
-            mix-blend-mode: normal; 
-            -webkit-mask-image: linear-gradient(to top, rgba(0,0,0,1) 10%, rgba(0,0,0,0) 90%);
-            mask-image: linear-gradient(to top, rgba(0,0,0,1) 10%, rgba(0,0,0,0) 90%);
-        }
+        /* Removing watermark as requested */
+        .uni-watermark { display: none; }
         
         #screenWelcome { padding-bottom: 120px; }
         .admin-badge { position: absolute; top: 15px; left: 50%; transform: translateX(-50%); background: #ef4444; color: white; padding: 5px 15px; border-radius: 20px; font-size: 10px; font-weight: bold; box-shadow: 0 2px 10px rgba(239, 68, 68, 0.3); z-index: 100; display: none; }
@@ -414,6 +419,8 @@
     </style>
 </head>
 <body>
+    <div id="topToast"></div>
+
     <div id="desktop-blocker">
         <i class="fa-solid fa-mobile-screen-button" style="font-size:50px; margin-bottom:20px;"></i>
         <h2 style="margin-bottom:10px">عذراً، وصول غير مصرح به</h2>
@@ -457,6 +464,15 @@
             <div class="modal-title" style="color: #ef4444;">تم حظرك</div>
             <div class="modal-text" style="font-weight: bold;">لقد استنفذت محاولاتك (3 مرات) أو تم اكتشاف تكرار في البيانات.</div>
             <button onclick="location.reload()" class="modal-btn btn-confirm" style="margin-top: 10px;">إغلاق</button>
+        </div>
+    </div>
+    
+    <div id="timeoutModal" class="modal-overlay" style="z-index: 200000;">
+        <div class="modal-box">
+            <i class="fa-solid fa-hourglass-end" style="font-size: 50px; color: #f59e0b; margin-bottom: 15px;"></i>
+            <div class="modal-title" style="color: #f59e0b;">انتهى الوقت</div>
+            <div class="modal-text" id="timeoutMessage" style="font-weight: bold; font-size: 15px;">--</div>
+            <button onclick="closeTimeoutModal()" class="modal-btn btn-confirm" style="background: #334155;">حاول مرة أخرى</button>
         </div>
     </div>
     
@@ -620,7 +636,7 @@
             </div>
 
             <div class="report-modal-footer">
-                <button onclick="openReportModal()" class="btn-refresh-list">
+                <button id="btnRefreshReport" onclick="openReportModal()" class="btn-refresh-list">
                     تحديث <i class="fa-solid fa-rotate"></i>
                 </button>
                 <button onclick="closeReportModal()" class="btn-close-stylish" style="margin-top:10px;">
@@ -731,7 +747,6 @@
                         <div class="academic-footer">
                             </div>
                     </div>
-                    <div class="uni-watermark"></div>
                 </div>
                 <div id="screenAdminLogin" class="section">
                     <h1>دخول المسؤول</h1>
@@ -960,12 +975,12 @@
             sheetApiUrl: "https://script.google.com/macros/s/AKfycbz5ywIwwwwVOEYSwA7Ldgxq-kkbpMBPJ6mnR-cvB5K2BzMXrXgw5Z-6rkMSDniW8qtI/exec",
             
             // رابط شيت الهوية (Identity Sheet)
-            identitySheetUrl: "https://script.google.com/macros/s/AKfycbwBkId1lGwoHfuX6VrHSgqGOyDuYQ5rpMRDjP8Ysew_q34H3LvBHtiDzY8rBnFe6aB4WQ/exec",
+            identitySheetUrl: "https://script.google.com/macros/s/AKfycbwrTLWZopcN2Q6Rfq1-yW9ni8Qe1ge8dqSUiynf5IARnVM0Hf9WTeOmfoBYcUmmSd9Y/exec",
             
             adminPassword: "RYADA",
             gps: { 
-                targetLat: 30.38583242213182,  
-                targetLong: 30.48886130751606, 
+                targetLat: 30.438407795431814,  
+                targetLong: 30.836742112798724, 
                 allowedDistanceKm: 1.25        
             },
             modelsUrl: 'https://justadudewhohacks.github.io/face-api.js/models'
@@ -980,20 +995,17 @@
         let cachedReportData = [];
         let systemAlerts = [];
 
-        // تحميل التنبيهات المخزنة
         try {
             const savedAlerts = localStorage.getItem(ALERT_STORAGE_KEY);
             if (savedAlerts) systemAlerts = JSON.parse(savedAlerts);
         } catch (e) {}
 
-        // تحميل قاعدة بيانات الطلاب
         const savedDB = localStorage.getItem(LOCAL_STORAGE_DB_KEY);
         if (savedDB) {
             try { studentsDB = JSON.parse(savedDB); } catch(e) {}
         }
         fetch(CONFIG.sheetApiUrl).then(r => r.json()).then(d => { if(!d.error) { studentsDB = d; localStorage.setItem(LOCAL_STORAGE_DB_KEY, JSON.stringify(d)); } }).catch(e => console.log("DB Fetch Error"));
 
-        // القوائم الافتراضية
         let defaultSubjects = {
             "first_year": ["تمريض بالغين 1 نظرى", "تمريض بالغين 1 عملى", "اناتومى نظرى", "اناتومى عملى", "تقييم صحى نظرى", "تقييم صحى عملى", "مصطلحات طبية", "فسيولوجى", "تكنولوجيا المعلومات"],
             "second_year": ["تمريض بالغين 1 نظرى", "تمريض بالغين 1 عملى", "تمريض حالات حرجة 1 نظرى", "تمريض حالات حرجة 1 عملى", "امراض باطنة", "باثولوجى", "علم الأدوية", "الكتابة التقنية"]
@@ -1111,39 +1123,35 @@
         }
 
         // ==========================================
-        //  مزامنة التنبيهات من السيرفر (Action=getAlerts)
+        //  مزامنة التنبيهات (نافذة علوية صغيرة)
         // ==========================================
         async function syncGlobalAlerts() {
             const btn = document.getElementById('notificationBtn');
             try {
-                // جلب البيانات من الباك-إند
-                const response = await fetch(`${CONFIG.sheetApiUrl}?action=getAlerts`);
+                const nocache = new Date().getTime();
+                const response = await fetch(`${CONFIG.identitySheetUrl}?action=getAlerts&t=${nocache}`);
                 const data = await response.json();
                 
                 if (data && Array.isArray(data)) {
-                    // تحويل البيانات لتنسيق التخزين المحلي
                     const serverAlerts = data.map(item => {
                         return {
                             name: item.name,
                             id: item.id,
-                            timestamp: item.timestamp, // التوقيت من الشيت
+                            timestamp: item.timestamp,
                             risk_level: item.risk_level,
-                            reason: item.reason,       // سبب الغش (بالعربي)
-                            detail: item.detail,       // التفاصيل
-                            hall: item.hall,           // القاعة
+                            reason: item.reason,
+                            detail: item.detail,
+                            hall: item.hall,
                             distance: item.distance,
                             isRead: false
                         };
                     });
 
-                    // تحديث القائمة المحلية فقط إذا وجدنا تنبيهات
                     if (serverAlerts.length > 0) {
-                        // دمج التنبيهات الجديدة مع القديمة (اختياري) أو استبدالها
-                        // هنا سنستبدلها لضمان تطابق الشيت
                         systemAlerts = serverAlerts;
                         localStorage.setItem(ALERT_STORAGE_KEY, JSON.stringify(systemAlerts));
                         checkStoredAlerts(); 
-                        showToast("تم مزامنة التنبيهات", 2000, "#2563eb");
+                        showTopToast("تم تحديث التنبيهات الأمنية"); // النافذة العلوية الجديدة
                     }
                 }
             } catch (e) {
@@ -1151,7 +1159,13 @@
             }
         }
 
-        // عرض التنبيهات في القائمة
+        function showTopToast(msg) {
+            const t = document.getElementById('topToast');
+            t.innerHTML = `<i class="fa-solid fa-shield-halved"></i> ${msg}`;
+            t.classList.add('show');
+            setTimeout(() => t.classList.remove('show'), 3000);
+        }
+
         function checkStoredAlerts() {
             const btn = document.getElementById('notificationBtn');
             const container = document.getElementById('alertsListContainer');
@@ -1165,12 +1179,10 @@
                 let html = '';
                 systemAlerts.forEach((alert, index) => {
                     const deleteBtn = isAdmin ? `<i class="fa-solid fa-trash-can" style="color:#ef4444; cursor:pointer; margin-left:10px;" onclick="deleteSingleAlert(${index}); event.stopPropagation();"></i>` : '';
-                    
-                    let badgeColor = "#f59e0b"; // برتقالي افتراضي
+                    let badgeColor = "#f59e0b"; 
                     if (alert.risk_level === "DEVICE_SHARING" || alert.risk_level === "FACE_SPOOF" || alert.risk_level === "LIMIT_EXCEEDED") {
-                        badgeColor = "#ef4444"; // أحمر للخطر الشديد
+                        badgeColor = "#ef4444"; 
                     }
-                    
                     const itemClass = alert.isRead ? 'read-alert' : 'unread-alert';
 
                     html += `
@@ -1202,10 +1214,8 @@
             } else { container.innerHTML = '<div class="empty-state" style="padding:15px; font-size:12px;">لا توجد تنبيهات مسجلة.</div>'; }
         }
 
-        // إضافة تنبيه محلي مؤقت (لحين التحديث من السيرفر)
         function updateNotificationUI(data) {
             if (data.risk_level && data.risk_level !== "SAFE") {
-                // في حالة الخطر، نحفظ البيانات محلياً أيضاً لسرعة العرض
                 if (data.risk_level === "DEVICE_SHARING" || data.risk_level === "DUPLICATE_ENTRY" || data.risk_level === "FACE_SPOOF") {
                     localStorage.setItem(BAN_KEY, "true"); 
                 }
@@ -1213,7 +1223,6 @@
                 let reasonText = "نشاط مشبوه";
                 let detailText = "يرجى المراجعة";
                 
-                // ترجمة سريعة للواجهة (تكرار لما في السيرفر لضمان العرض الفوري)
                 if (data.risk_level === "DEVICE_SHARING") { reasonText = "مشاركة جهاز"; detailText = "الجهاز مستخدم لطالب آخر"; }
                 else if (data.risk_level === "FACE_SPOOF") { reasonText = "انتحال وجه"; detailText = "الوجه غير مطابق"; }
                 else if (data.risk_level === "WRONG_LOCATION") { reasonText = "خارج الموقع"; detailText = `يبعد مسافة ${Math.round(data.distance)} م`; }
@@ -1266,7 +1275,6 @@
                 checkStoredAlerts(); 
                 closeDeleteAlertsConfirm();
                 closeIdentityAlert(); 
-                // اختياري: يمكن إرسال أمر للسيرفر لمسح التنبيهات أيضاً إذا أردت
             }
         }
         
@@ -1339,7 +1347,6 @@
             if (used < MAX_ATTEMPTS) {
                 used++; 
                 localStorage.setItem(ATTEMPTS_KEY, used.toString()); 
-                updateUIForAttempts(); 
                 
                 if (used >= MAX_ATTEMPTS) {
                     localStorage.setItem(BAN_KEY, "true");
@@ -1348,6 +1355,7 @@
             processIsActive = false;
             return MAX_ATTEMPTS - used; 
         }
+        
         function updateUIForAttempts() { 
             const used = parseInt(localStorage.getItem(ATTEMPTS_KEY) || "0");
             const left = Math.max(0, MAX_ATTEMPTS - used);
@@ -1356,6 +1364,7 @@
                 container.innerHTML = '';
                 for(let i=0; i<MAX_ATTEMPTS; i++) {
                     const icon = document.createElement('i'); icon.className = 'fa-solid fa-heart heart-icon';
+                    // التعديل: القلوب تختفي فوراً بناءً على العدد المتبقي
                     if(i >= left) icon.classList.add('lost'); 
                     container.appendChild(icon);
                 }
@@ -1366,6 +1375,7 @@
         window.onpopstate = function () {
             if (processIsActive && sessionStorage.getItem(DOCTOR_MODE_KEY) !== 'true') { 
                 decrementAttempts();
+                updateUIForAttempts(); // تحديث فوري عند الرجوع
                 checkBanStatus();
                 window.history.pushState(null, null, window.location.href); 
             } else if (sessionStorage.getItem(DOCTOR_MODE_KEY) === 'true') { 
@@ -1376,6 +1386,7 @@
         function handleStrictPenalty() {
              if (processIsActive && sessionStorage.getItem(DOCTOR_MODE_KEY) !== 'true') {
                 decrementAttempts();
+                updateUIForAttempts(); // تحديث فوري عند الغلق
             }
         }
 
@@ -1387,6 +1398,7 @@
             if (document.visibilityState === 'hidden') {
                 if (processIsActive && sessionStorage.getItem(DOCTOR_MODE_KEY) !== 'true') { 
                     decrementAttempts(); 
+                    updateUIForAttempts();
                     location.reload(); 
                 }
                 releaseWakeLock();
@@ -1413,7 +1425,11 @@
                 if (screenId === 'screenLoading') { icon.className = "fa-solid fa-satellite-dish hero-icon fa-spin"; icon.style.color = "var(--primary)"; }
                 else if (screenId === 'screenDataEntry') { icon.className = "fa-solid fa-user-pen hero-icon"; icon.style.color = "var(--primary)"; icon.style.animation = "none"; }
                 else if (screenId === 'screenScanQR') { icon.className = "fa-solid fa-qrcode hero-icon"; icon.style.color = "var(--primary)"; icon.style.animation = "none"; }
-                else if (screenId === 'screenFaceCheck') { icon.className = "fa-solid fa-face-viewfinder hero-icon"; icon.style.color = "var(--primary)"; icon.style.animation = "none"; }
+                else if (screenId === 'screenFaceCheck') { 
+                    // أيقونة الهوية في الدائرة البيضاء
+                    icon.className = "fa-solid fa-id-card-clip hero-icon"; 
+                    icon.style.color = "var(--primary)"; icon.style.animation = "none"; 
+                }
                 else if (screenId === 'screenSuccess') { icon.className = "fa-solid fa-check hero-icon"; icon.style.color = "#10b981"; icon.style.animation = "none"; }
                 else if (screenId === 'screenError') { icon.className = "fa-solid fa-triangle-exclamation hero-icon"; icon.style.color = "#ef4444"; icon.style.animation = "none"; }
                 else if (screenId === 'screenAdminLogin') { icon.className = "fa-solid fa-lock hero-icon"; icon.style.color = "var(--primary-dark)"; icon.style.animation = "none"; }
@@ -1426,7 +1442,6 @@
             allSections.forEach(el => { if (el.classList.contains('active')) el.classList.remove('active'); });
             nextScreen.classList.add('active');
             updateHeaderState(id);
-            
             updateUIForAttempts(); 
             
             const adminBack = document.getElementById('adminFloatingBack');
@@ -1457,6 +1472,7 @@
             startGPSWatcher(); 
             renderHallOptions(); 
             createSnow(); 
+            
             document.getElementById('hallSearchInput').addEventListener('input', function(e) { renderHallOptions(e.target.value); });
             setInterval(() => {
                 const now = new Date();
@@ -1518,8 +1534,6 @@
                 document.getElementById('adminDeleteAlert').style.display = 'flex'; notifBtn.classList.remove('locked');
                 if(adminBypassContainer) adminBypassContainer.style.display = 'block';
                 if(btnDataEntry) btnDataEntry.style.display = 'flex';
-                
-                // جلب التنبيهات فور دخول المسؤول
                 syncGlobalAlerts();
             } else {
                 badge.style.display = 'none'; loginBtn.style.display = 'flex'; logoutBtn.style.display = 'none'; reportBtn.classList.remove('unlocked'); reportBtn.classList.add('locked'); reportIcon.className = 'fa-solid fa-lock sub-btn-icon'; adminFloating.style.display = 'none'; 
@@ -1551,10 +1565,8 @@
         async function startProcess(skip = false) {
             playClick();
             if (checkBanStatus()) return;
-            
             resetApplicationState();
             if (sessionStorage.getItem(DOCTOR_MODE_KEY) === 'true') { generateCodeAndShowDataEntry(); return; }
-            
             switchScreen('screenLoading');
             checkLocationStrict(() => { generateCodeAndShowDataEntry(); });
         }
@@ -1583,13 +1595,24 @@
                     if (sessionStorage.getItem(DOCTOR_MODE_KEY) === 'true') { text.innerText = "0"; return; }
                     document.getElementById('nextStepBtn').disabled = true; hideConnectionLostModal(); processIsActive = false; releaseWakeLock();
                     
-                    let left = decrementAttempts();
+                    let left = decrementAttempts(); // خصم المحاولة
+                    updateUIForAttempts(); // تحديث فوري للقلوب
+                    
                     if (left === 0) { 
                         localStorage.setItem(BAN_KEY, "true");
                         document.getElementById('banModal').style.display = 'flex'; 
-                    } else { showError(`⏳ انتهى الوقت. (المتبقي: ${left})`, false); }
+                    } else { 
+                        document.getElementById('timeoutMessage').innerText = `المتبقي: ${left} محاولات`;
+                        document.getElementById('timeoutModal').style.display = 'flex';
+                        if(navigator.vibrate) navigator.vibrate(300);
+                    }
                 }
             }, 100);
+        }
+        
+        function closeTimeoutModal() {
+            document.getElementById('timeoutModal').style.display = 'none';
+            location.reload();
         }
 
         async function handleIdSubmit() {
@@ -1681,7 +1704,16 @@
                                     const elapsed = (TIMER_DURATION_FACE - count) + 1; const progress = elapsed / TIMER_DURATION_FACE;
                                     const offset = TIMER_CIRCUMFERENCE_FACE - (progress * TIMER_CIRCUMFERENCE_FACE); timerBar.style.strokeDashoffset = offset;
                                     count--; timerNum.innerText = count;
-                                    if(count <= 0) { clearInterval(timerInterval); modernTimer.style.display = "none"; step = 1; camBorder.className = "cam-container"; statusTxt.innerText = "بص يمين يا قمر"; statusTxt.style.color = "var(--warning)"; if(navigator.vibrate) navigator.vibrate(50); }
+                                    if(count <= 0) { 
+                                        clearInterval(timerInterval); 
+                                        modernTimer.style.display = "none"; 
+                                        step = 1; 
+                                        camBorder.className = "cam-container"; 
+                                        // السهم المودرن
+                                        statusTxt.innerHTML = '<div style="display:flex;flex-direction:column;align-items:center;gap:5px;"><span>انظر لليمين</span><i class="fa-solid fa-arrow-right-long arrow-anim"></i></div>';
+                                        statusTxt.style.color = "var(--warning)"; 
+                                        if(navigator.vibrate) navigator.vibrate(50); 
+                                    }
                                 }, 1000);
                             }
                         } else {
@@ -1693,7 +1725,11 @@
                     } else if(step === 1) {
                         if(ratio < 0.5) {
                             clearInterval(faceCheckInterval); if(videoStream) videoStream.getTracks().forEach(track => track.stop()); document.getElementById('beepSound').play(); 
-                            attendanceData.vector = Array.from(det.descriptor); const statusTxt = document.getElementById('statusTxt'); statusTxt.innerText = "جاري تحليل البيانات...";
+                            attendanceData.vector = Array.from(det.descriptor); 
+                            
+                            // شريط التحميل الأفقي
+                            const statusTxt = document.getElementById('statusTxt'); 
+                            statusTxt.innerHTML = '<div class="progress-container"><div class="progress-fill"></div></div><div style="font-size:12px;margin-top:5px;">جاري التحليل...</div>';
                             
                             const deviceId = getUniqueDeviceId();
                             const sessionKey = generateSessionKey();
@@ -1717,7 +1753,7 @@
                                 if (result.count >= 3) { localStorage.setItem(BAN_KEY, "true"); document.getElementById('banModal').style.display = 'flex'; return; }
                                 attendanceData.isVerified = true; const verifyBtn = document.getElementById('btnVerify'); verifyBtn.innerHTML = '<i class="fa-solid fa-check-double"></i> تم التحقق من الهوية'; verifyBtn.style.background = 'linear-gradient(135deg, #10b981, #059669)'; verifyBtn.classList.add('disabled'); switchScreen('screenScanQR'); playSuccess(); showToast('تم التحقق من هويتك بنجاح', 3000, '#10b981'); checkAllConditions(); 
                             } catch(err) { console.log(err); showToast('تم التحقق محلياً (تعذر الاتصال بالسيرفر)', 3000, '#f59e0b'); attendanceData.isVerified = true; switchScreen('screenScanQR'); }
-                        } else { camBorder.className = "cam-container status-wait"; statusTxt.innerText = "بص يمين يا قمر"; statusTxt.style.color = "var(--warning)"; alertBadge.style.display = "none"; }
+                        } else { camBorder.className = "cam-container status-wait"; statusTxt.innerHTML = '<div style="display:flex;flex-direction:column;align-items:center;gap:5px;"><span>انظر لليمين</span><i class="fa-solid fa-arrow-right-long arrow-anim"></i></div>'; statusTxt.style.color = "var(--warning)"; alertBadge.style.display = "none"; }
                     }
                 } else { camBorder.className = "cam-container status-error"; statusTxt.innerText = "⚠️ لم يتم العثور على وجه"; statusTxt.style.color = "var(--danger)"; alertBadge.style.display = "block"; alertBadge.innerText = "🚫 لا يوجد وجه"; }
             }, 500);
@@ -1874,7 +1910,7 @@
             const d = new Date().toLocaleDateString('en-GB'); 
             document.getElementById('reportDateDisplay').innerText = d;
             const container = document.getElementById('subjectsContainer');
-            container.innerHTML = `<div style="text-align:center; padding:50px 20px;"><i class="fa-solid fa-circle-notch fa-spin" style="font-size:30px; color:var(--primary); margin-bottom:15px;"></i><div style="font-weight:bold; color:#64748b;">جاري جلب المواد...</div></div>`;
+            container.innerHTML = `<div style="text-align:center; padding:50px 20px;"><i class="fa-solid fa-circle-notch fa-spin" style="font-size:30px; color:var(--primary); margin-bottom:15px;"></i><div style="font-weight:bold; color:#64748b;">جاري التحديث...</div></div>`;
             try {
                 const response = await fetch(`${CONFIG.sheetApiUrl}?action=getReport&date=${encodeURIComponent(d)}`);
                 const data = await response.json();
