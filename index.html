@@ -23,7 +23,7 @@
         #desktop-blocker { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: #0f172a; color: #ef4444; z-index: 2147483647; display: none; flex-direction: column; align-items: center; justify-content: center; text-align: center; font-family: 'Cairo'; }
         :root { --primary: #0ea5e9; --primary-dark: #0284c7; --text-main: #1e293b; --text-sub: #64748b; --glass-bg: rgba(255, 255, 255, 0.95); --danger: #ef4444; --success: #10b981; --warning: #f59e0b; }
         * { box-sizing: border-box; margin: 0; padding: 0; -webkit-tap-highlight-color: transparent; }
-        html { background-color: #e0f2fe !important; height: 100vh; overflow-y: auto; overflow-x: hidden; } /* تعديل 1: خلفية الصفحة */
+        html { background-color: #e0f2fe !important; height: 100vh; overflow-y: auto; overflow-x: hidden; } 
         
         body { 
             font-family: 'Cairo', sans-serif; 
@@ -35,7 +35,6 @@
         
         .en-font { font-family: 'Outfit', sans-serif !important; direction: ltr !important; unicode-bidi: embed; letter-spacing: 0.5px; }
         
-        /* تعديل 1: تغيير خلفية الخلفية للصورة السماوية المتدرجة */
         .bg-image { 
             background: linear-gradient(135deg, #e0f2fe 0%, #0ea5e9 100%); 
             position: fixed; top: 0; left: 0; width: 100%; height: 100%; z-index: -1; pointer-events: none; 
@@ -231,6 +230,8 @@
         .btn-back-report { width: 35px; height: 35px; border-radius: 10px; border: none; background: #f1f5f9; color: #475569; cursor: pointer; display: flex; align-items: center; justify-content: center; }
         .student-detailed-card { background: white; border-radius: 14px; padding: 15px; margin-bottom: 10px; border: 1px solid #f1f5f9; box-shadow: 0 4px 10px rgba(0, 0, 0, 0.03); display: flex; justify-content: space-between; align-items: center; }
         .student-detailed-card.alert-row { background: #fff5f5; border: 1px solid #fecaca; }
+        /* === إضافة ستايل التحديد الجديد === */
+        .student-detailed-card.highlighted-red { background: #fee2e2 !important; border: 1px solid #ef4444 !important; }
         .student-detailed-card.alert-row .st-name { color: #b91c1c; }
         .st-data-col { display: flex; flex-direction: column; gap: 4px; text-align: right; }
         .st-name { font-weight: 800; font-size: 13px; color: #1e293b; }
@@ -241,6 +242,10 @@
         .st-detail-row { display: flex; align-items: center; gap: 5px; font-size: 11px; color: #475569; margin-top: 2px; }
         .btn-delete-item { width: 38px; height: 38px; background: #fff1f2; color: #f43f5e; border: none; border-radius: 12px; display: flex; align-items: center; justify-content: center; cursor: pointer; transition: all 0.2s; font-size: 14px; flex-shrink: 0; margin-right: 10px; }
         .btn-delete-item:active { transform: scale(0.9); background: #f43f5e; color: white; }
+        /* === زر التحديد الجديد === */
+        .btn-highlight-item { width: 38px; height: 38px; background: #fff7ed; color: #f97316; border: none; border-radius: 12px; display: flex; align-items: center; justify-content: center; cursor: pointer; transition: all 0.2s; font-size: 14px; flex-shrink: 0; margin-left: 5px; }
+        .btn-highlight-item:active { transform: scale(0.9); background: #f97316; color: white; }
+
         .btn-refresh-list { background: linear-gradient(135deg, #0ea5e9, #0284c7); color: white; width: 100%; padding: 14px; border-radius: 16px; font-weight: 800; border: none; cursor: pointer; font-family: 'Cairo'; box-shadow: 0 4px 15px rgba(14, 165, 233, 0.3); display: flex; align-items: center; justify-content: center; gap: 8px; font-size: 14px; }
         .btn-refresh-list:active { transform: scale(0.98); }
         .btn-close-stylish { background: #f1f5f9; color: #475569; width: 100%; padding: 12px; border-radius: 16px; font-weight: 700; border: 1px solid #e2e8f0; cursor: pointer; font-family: 'Cairo'; font-size: 13px; }
@@ -1038,9 +1043,9 @@
     <script src="https://cdn.jsdelivr.net/npm/canvas-confetti@1.6.0/dist/confetti.browser.min.js"></script>
     <script>
         // ==========================================
-        //  الرابط الموحد الجديد (لجميع الجروبات)
+        //  الرابط الموحد (Master Link)
         // ==========================================
-        const MASTER_REGISTRATION_LINK = "https://script.google.com/macros/s/AKfycbzUFm4izNNL5bwPg_Pntt83-hf4tXDz8Cnj2GJq4AjiWS97N-4bBk00HFUk7ePIyw6c/exec";
+        const MASTER_REGISTRATION_LINK = "https://script.google.com/macros/s/AKfycbznfekFNnNWdJ6htdllsbPHztbL0tolOFH7V9f3KeC8L4fwCEyVYE1yM6JmyXFEv4hr/exec";
 
         const GROUP_SHEET_URLS = {};
         // ملء الروابط تلقائياً
@@ -1048,15 +1053,13 @@
         for(let i=1; i<=20; i++) { GROUP_SHEET_URLS["2G"+i] = MASTER_REGISTRATION_LINK; }
 
         const CONFIG = {
-            // هذا الرابط (نفسه) يستخدم لجلب البيانات في هذا التصميم، أو يمكنك وضع رابط منفصل لجلب الأسماء
             sheetApiUrl: MASTER_REGISTRATION_LINK, 
             identitySheetUrl: "https://script.google.com/macros/s/AKfycbwx09rtHtsefAcu-09Bn5boBsLKGpivHgFcpYcnwSQIaSLja-wRzq3PLgAHTCx2te2E/exec",
             adminPassword: "RYADANUR1",
             gps: { 
                 targetLat: 30.385839819568105,  
                 targetLong: 30.488877976075997, 
-                // تعديل 8: تقليل الدقة المطلوبة لسرعة الالتقاط
-                allowedDistanceKm: 5     
+                allowedDistanceKm: 5      
             },
             modelsUrl: 'https://justadudewhohacks.github.io/face-api.js/models'
         };
@@ -1100,9 +1103,8 @@
         const TEMP_ID_KEY = "temp_student_id";
         const TEMP_CODE_KEY = "temp_session_code";
         
-        const MAX_ATTEMPTS = 9999; // رقم كبير جداً لمنع الحظر
+        const MAX_ATTEMPTS = 9999;
         const TODAY_DATE_KEY = new Date().toLocaleDateString('en-GB').replace(/\//g, '-');
-        const ATTEMPTS_KEY = "strict_attempts_" + TODAY_DATE_KEY;
         const BAN_KEY = "daily_ban_" + TODAY_DATE_KEY;
 
         let userIP = "Unknown";
@@ -1116,7 +1118,7 @@
         let userLat = "", userLng = ""; 
         let lastNoseX = 0, lastNoseY = 0;
         let faceCheckInterval = null; 
-        let videoStream = null;      
+        let videoStream = null;       
         const FACE_MODELS_URL = CONFIG.modelsUrl;
         const TIMER_DURATION_FACE = 3; 
         const TIMER_CIRCUMFERENCE_FACE = 282.7;
@@ -1290,7 +1292,6 @@
         }
 
         function updateNotificationUI(data) {
-            // تم إلغاء تفعيل الحظر من هنا أيضاً
             if (data.risk_level && data.risk_level !== "SAFE") {
                 let reasonText = "نشاط مشبوه";
                 let detailText = "يرجى المراجعة";
@@ -1388,7 +1389,6 @@
             yearWrapper.querySelector('.trigger-text').textContent = '-- اختر الفرقة --'; yearWrapper.classList.remove('open');
             yearWrapper.querySelectorAll('.custom-option').forEach(o => o.classList.remove('selected')); document.getElementById('yearSelect').value = '';
             
-            // إعادة تعيين الجروب
             const groupWrapper = document.getElementById('groupSelectWrapper');
             groupWrapper.querySelector('.trigger-text').textContent = '-- اختر الفرقة أولاً --'; groupWrapper.classList.add('disabled'); groupWrapper.classList.remove('open');
             document.getElementById('groupOptionsContainer').innerHTML = ''; document.getElementById('groupSelect').innerHTML = '<option value="" disabled selected>-- اختر الفرقة أولاً --</option>';
@@ -1418,14 +1418,12 @@
         function releaseWakeLock() { if (wakeLock !== null) { wakeLock.release().then(() => { wakeLock = null; }); } }
         
         function getAttemptsLeft() { 
-            return 999; // دائماً متاح
+            return 999; 
         }
         function decrementAttempts() { 
-            // تم إلغاء المنطق هنا لعدم الحظر
             return 999; 
         }
         function updateUIForAttempts() { 
-            // تم إخفاء القلوب لأن النظام مفتوح
             const container = document.getElementById('attemptsHeartsContainer');
             if(container) container.innerHTML = '';
         }
@@ -1440,9 +1438,7 @@
             }
         };
         
-        function handleStrictPenalty() {
-             // تم الإلغاء
-        }
+        function handleStrictPenalty() {}
 
         window.addEventListener('beforeunload', (event) => {
              handleStrictPenalty();
@@ -1450,26 +1446,18 @@
 
         document.addEventListener('visibilitychange', () => {
             if (document.visibilityState === 'hidden') {
-                if (isOpeningMaps) {
-                    return;
-                }
-                // تم إلغاء الحظر عند الخروج
+                if (isOpeningMaps) { return; }
                 if (processIsActive && sessionStorage.getItem(DOCTOR_MODE_KEY) !== 'true') { 
-                    location.reload(); // مجرد إعادة تحميل
+                    location.reload(); 
                 }
                 releaseWakeLock();
             } else { 
-                if (isOpeningMaps) {
-                    isOpeningMaps = false; 
-                }
+                if (isOpeningMaps) { isOpeningMaps = false; }
                 if(processIsActive) requestWakeLock(); 
             }
         });
 
-        function checkBanStatus() {
-            // تم إلغاء فحص الحظر
-            return false;
-        }
+        function checkBanStatus() { return false; }
 
         function updateHeaderState(screenId) {
             const wrapper = document.getElementById('heroIconWrapper');
@@ -1557,7 +1545,6 @@
 
         function startGPSWatcher() {
             if (navigator.geolocation) {
-                // تعديل 8: تحسين سرعة تحديد الموقع
                 geo_watch_id = navigator.geolocation.watchPosition(
                     (position) => { userLat = position.coords.latitude; userLng = position.coords.longitude; },
                     (error) => { }, { enableHighAccuracy: false, maximumAge: 60000, timeout: 10000 }
@@ -1586,7 +1573,6 @@
             } else {
                 badge.style.display = 'none'; loginBtn.style.display = 'flex'; logoutBtn.style.display = 'none'; reportBtn.classList.remove('unlocked'); reportBtn.classList.add('locked'); reportIcon.className = 'fa-solid fa-lock sub-btn-icon'; adminFloating.style.display = 'none'; 
                 document.getElementById('adminDeleteAlert').style.display = 'none'; notifBtn.classList.add('locked');
-                // تعديل 7: إبقاء زر التجاوز مرئياً للطالب (للتجربة)
                 if(adminBypassContainer) adminBypassContainer.style.display = 'block';
                 if(btnDataEntry) btnDataEntry.style.display = 'none';
             }
@@ -1599,7 +1585,6 @@
                     navigator.geolocation.getCurrentPosition(
                         (pos) => { userLat = pos.coords.latitude; userLng = pos.coords.longitude; checkDistance(onSuccess); },
                         (err) => { document.getElementById('locationForceModal').style.display = 'flex'; },
-                        // تعديل 8: تحسين سرعة تحديد الموقع
                         { enableHighAccuracy: false, maximumAge: 60000, timeout: 10000 }
                     );
                 } else { document.getElementById('locationForceModal').style.display = 'flex'; }
@@ -1614,7 +1599,6 @@
 
         async function startProcess(skip = false) {
             playClick();
-            // removed checkBanStatus from here
             resetApplicationState();
             if (sessionStorage.getItem(DOCTOR_MODE_KEY) === 'true') { generateCodeAndShowDataEntry(); return; }
             switchScreen('screenLoading');
@@ -1653,7 +1637,6 @@
                     let left = decrementAttempts(); 
                     updateUIForAttempts(); 
                     
-                    // تعديل 2: رسالة انتهاء الوقت مع تحذير الحظر
                     document.getElementById('timeoutMessage').innerText = `انتهى الوقت. انتبه: في المرة القادمة سيتم حظرك.`;
                     document.getElementById('timeoutModal').style.display = 'flex';
                     if(navigator.vibrate) navigator.vibrate(300);
@@ -1682,7 +1665,6 @@
             } else { alertBox.innerText = "❌ الكود غير صحيح."; alertBox.style.display = 'block'; if(navigator.vibrate) navigator.vibrate(300); }
         }
 
-        // تعديل 4: عرض مودال التجاوز
         function toggleBypassMode() {
             const chk = document.getElementById('bypassCheckbox');
             const btnVerify = document.getElementById('btnVerify');
@@ -1730,7 +1712,6 @@
                 loaderSpinner.style.display = 'none'; statusTxt.innerText = "اثبت مكانك تماماً"; statusTxt.style.color = "var(--primary)"; startStrictAI();
             } catch (e) {
                 console.error("Camera Error:", e); 
-                // تعديل 5: عرض نافذة خطأ الكاميرا الأنيقة
                 document.getElementById('cameraErrorModal').style.display = 'flex';
                 switchScreen('screenScanQR'); 
             }
@@ -1806,7 +1787,6 @@
                                 const response = await fetch(CONFIG.identitySheetUrl, { method: 'POST', mode: 'cors', headers: {'Content-Type': 'text/plain'}, body: JSON.stringify(payload) });
                                 const result = await response.json();
                                 updateNotificationUI(result);
-                                // if (result.count >= 3) { ... } // تم إلغاء الحظر
                                 
                                 const successModal = document.getElementById('verificationSuccessModal');
                                 successModal.style.display = 'flex';
@@ -1836,11 +1816,9 @@
             const btn = document.getElementById('submitBtn');
             if(btn.disabled && btn.innerText.includes('جاري')) return;
             
-            // التحقق من الموقع
             if(!userLat || !userLng) {
                 if (navigator.geolocation) {
                     navigator.geolocation.getCurrentPosition(
-                        // تعديل 8: تحسين سرعة تحديد الموقع
                         (pos) => { userLat = pos.coords.latitude; userLng = pos.coords.longitude; submitToGoogle(); },
                         (err) => { document.getElementById('locationForceModal').style.display = 'flex'; },
                         { enableHighAccuracy: false, timeout: 10000, maximumAge: 60000 }
@@ -1859,7 +1837,6 @@
                 showToast("يرجى إكمال جميع الخطوات.", 3000, '#f59e0b'); return; 
             }
             
-            // تعديل 6: فحص التكرار (Duplicate Check)
             const isDuplicate = cachedReportData.some(item => 
                 item.uniID === attendanceData.uniID && 
                 item.subject === selectedSubject
@@ -1871,11 +1848,9 @@
                 return;
             }
 
-            // --- التعديل هنا: تغيير النص ---
             btn.innerHTML = '<i class="fa-solid fa-circle-notch fa-spin"></i> جاري تأكيد الحضور...'; 
             btn.disabled = true;
             
-            // تجهيز البيانات
             const now = new Date(); 
             document.getElementById('receiptName').innerText = attendanceData.name; 
             document.getElementById('receiptID').innerText = attendanceData.uniID; 
@@ -1902,7 +1877,6 @@
             formParams.append("gps_lng", userLng);
             formParams.append("deviceId", deviceId);
 
-            // الحصول على الرابط
             let targetUrl = GROUP_SHEET_URLS[selectedGroup];
             if (!targetUrl || targetUrl.includes("LINK_SHEET")) {
                 showToast("عذراً، لم يتم تفعيل رابط هذا الجروب بعد.", 3000, '#ef4444');
@@ -1910,31 +1884,42 @@
                 return;
             }
 
-            // === بدء المحاولة مع التكرار الذكي ===
-            const maxRetries = 5; // عدد المحاولات
+            // === بدء المحاولة مع التكرار الذكي & التحقق من الرد ===
+            const maxRetries = 5; 
             let attempt = 0;
             let success = false;
 
             while (attempt < maxRetries && !success) {
                 try {
                     attempt++;
-                    // لو دي مش أول محاولة، نغير رسالة الزر
                     if (attempt > 1) {
                         btn.innerHTML = `<i class="fa-solid fa-rotate fa-spin"></i> محاولة ${attempt} من ${maxRetries}...`;
                         await new Promise(r => setTimeout(r, 1000 + Math.random() * 2000));
                     }
 
-                    await fetch(targetUrl, { 
+                    // *** التعديل الجوهري: استخدام CORS والتحقق من JSON ***
+                    let response = await fetch(targetUrl, { 
                         method: 'POST', 
-                        mode: 'no-cors', 
+                        mode: 'cors',  
                         headers: { 'Content-Type': 'application/x-www-form-urlencoded' }, 
                         body: formParams.toString() 
                     });
                     
-                    success = true;
+                    let result = await response.json();
+
+                    if (result.result === "success") {
+                        success = true;
+                    } else if (result.result === "duplicate") {
+                        success = true; 
+                        showToast("مسجل مسبقاً", 3000, '#f59e0b');
+                    } else if (result.message === "Server Busy") {
+                        throw new Error("Server Busy");
+                    } else {
+                        throw new Error("Unknown Error");
+                    }
 
                 } catch (err) {
-                    console.log("فشل الاتصال، المحاولة القادمة...");
+                    console.log("فشل الاتصال، المحاولة القادمة... " + err);
                 }
             }
 
@@ -1947,10 +1932,6 @@
                 resetApplicationState();
                 switchScreen('screenSuccess'); playSuccess(); 
                 
-                // تعديل 9: منع تأثيرات القصاصات (Confetti)
-                // confetti({ particleCount: 150, spread: 70, origin: { y: 0.6 }, colors: ['#0ea5e9', '#10b981'] });
-                
-                // إضافة السجل للقائمة المحلية بعد التسجيل لغرض فحص التكرار (تعديل 6)
                 cachedReportData.push({
                     uniID: attendanceData.uniID,
                     subject: selectedSubject,
@@ -1996,20 +1977,16 @@
             subjectWrapper.querySelector('.custom-select-trigger').addEventListener('click', (e) => toggleSelect(subjectWrapper, e));
             hallWrapper.querySelector('.custom-select-trigger').addEventListener('click', (e) => toggleSelect(hallWrapper, e));
             
-            // إعداد خيارات السنة الدراسية
             yearWrapper.querySelectorAll('.custom-option').forEach(op => {
                 op.addEventListener('click', function(e) {
                     e.stopPropagation(); yearWrapper.querySelectorAll('.custom-option').forEach(o => o.classList.remove('selected'));
                     this.classList.add('selected'); yearWrapper.querySelector('.trigger-text').textContent = this.querySelector('span').textContent;
                     yearWrapper.classList.remove('open'); document.getElementById('yearSelect').value = this.getAttribute('data-value');
-                    playClick(); updateGroups(); updateSubjects(); // تحديث الجروبات والمواد
+                    playClick(); updateGroups(); updateSubjects(); 
                 });
             });
         }
 
-        // ==========================================
-        //  دالة تحديث قائمة الجروبات (ديناميكية)
-        // ==========================================
         function updateGroups() {
             const y = document.getElementById("yearSelect").value;
             const gWrapper = document.getElementById('groupSelectWrapper'); 
@@ -2083,7 +2060,7 @@
         }
         
         async function stopCameraSafely() { if(html5QrCode && html5QrCode.isScanning) { try { await html5QrCode.stop(); } catch(e) {} } document.getElementById('qr-reader').style.display = 'none'; releaseWakeLock(); }
-        function retryCamera() { document.getElementById('cameraErrorModal').style.display = 'none'; proceedToCamera(); } // تم تغييرها لتعيد تشغيل FaceCheck
+        function retryCamera() { document.getElementById('cameraErrorModal').style.display = 'none'; proceedToCamera(); } 
         async function startQrScanner() { playClick(); requestWakeLock(); await stopCameraSafely(); document.getElementById('startScanCard').style.display = 'none'; document.getElementById('qr-reader').style.display = 'block'; document.getElementById('qr-reader').innerHTML = '<div class="scanner-laser" style="display:block"></div>'; document.getElementById('submitBtn').disabled = true; document.getElementById('sessionPass').value = ''; html5QrCode = new Html5Qrcode("qr-reader"); try { await html5QrCode.start({ facingMode: "environment" }, { fps: 10, qrbox: { width: 250, height: 250 } }, (t) => { playBeep(); html5QrCode.stop().then(() => { document.getElementById('qr-reader').style.display = 'none'; document.getElementById('scanSuccessMsg').style.display = 'flex'; document.getElementById('sessionPass').value = t; checkAllConditions(); if(navigator.vibrate) navigator.vibrate([100,50,100]); releaseWakeLock(); }); }); } catch (err) { await stopCameraSafely(); document.getElementById('startScanCard').style.display = 'none'; document.getElementById('retryCamBtn').style.display = 'flex'; document.getElementById('cameraErrorModal').style.display = 'flex'; } }
         function checkAdminPassword() { 
             playClick(); 
@@ -2107,7 +2084,7 @@
             if (!isMobileDevice()) { document.getElementById('desktop-blocker').style.display = 'flex'; document.body.style.overflow = 'hidden'; throw new Error("Desktop access denied."); }
         }
         
-async function openReportModal() {
+        async function openReportModal() {
             playClick();
             document.getElementById('reportModal').style.display = 'flex';
             showSubjectsView();
@@ -2124,14 +2101,10 @@ async function openReportModal() {
             </div>`;
 
             try {
-                // === التعديل هنا: وضعنا الرابط الموحد داخل القائمة ===
-                // بما أننا نستخدم شيت ماستر واحد، نضع رابطه فقط
                 const urls = [MASTER_REGISTRATION_LINK]; 
                 
-                // جلب البيانات
                 const responses = await Promise.all(urls.map(url => fetch(`${url}?action=getReport&date=${d}`).then(res => res.json()).catch(e => [])));
                 
-                // دمج النتائج (لو كان أكثر من رابط)
                 let allData = [].concat(...responses);
 
                 if (!allData || allData.length === 0) {
@@ -2142,7 +2115,6 @@ async function openReportModal() {
                     return;
                 }
 
-                // ترتيب من الأحدث للأقدم
                 allData.reverse(); 
                 cachedReportData = allData; 
                 renderSubjectsList(allData); 
@@ -2171,16 +2143,13 @@ async function openReportModal() {
             document.getElementById('subjectsContainer').innerHTML = html;
         }
 
-function openSubjectDetails(subjectName) {
+        function openSubjectDetails(subjectName) {
             playClick();
             document.getElementById('currentSubjectTitle').innerText = subjectName;
             
-            // 1. تصفية الطلاب حسب المادة المختارة
             let students = cachedReportData.filter(s => s.subject === subjectName);
 
-            // 2. (الخطوة الجديدة) ترتيب الطلاب حسب الجروب تصاعدياً (1G1, 1G2, ...)
             students.sort((a, b) => {
-                // ترتيب نصي ذكي (عشان 1G10 يجي بعد 1G9 مش بعد 1G1)
                 return a.group.localeCompare(b.group, undefined, {numeric: true, sensitivity: 'base'});
             });
 
@@ -2188,17 +2157,21 @@ function openSubjectDetails(subjectName) {
             students.forEach(item => {
                 const sessionCode = item.code || "N/A";
                 const hallName = item.hall || "N/A";
-                const groupName = item.group || "Unknown"; // قراءة الجروب
+                const groupName = item.group || "Unknown"; 
                 const studentName = item.name || "غير معروف";
                 const studentID = item.uniID || "---";
                 const timeStr = item.time || "--:--";
                 
+                // *** إضافة زر التحديد (Highlight) وزر الحذف (Delete) ***
                 html += `
-                    <div class="student-detailed-card">
+                    <div class="student-detailed-card" id="card-${studentID}">
                         <div class="st-data-col" style="width: 100%;">
                             <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:5px;">
                                 <div class="st-name" style="font-size:14px;">${studentName}</div>
-                                <button class="btn-delete-item" onclick="deleteEntry('${studentID}', this)" style="margin-right:0;"><i class="fa-solid fa-trash"></i></button>
+                                <div style="display:flex;">
+                                    <button class="btn-highlight-item" onclick="highlightEntry('${studentID}', '${subjectName}', this)"><i class="fa-solid fa-highlighter"></i></button>
+                                    <button class="btn-delete-item" onclick="deleteEntry('${studentID}', '${subjectName}', this)" style="margin-right:5px;"><i class="fa-solid fa-trash"></i></button>
+                                </div>
                             </div>
                             
                             <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:8px;">
@@ -2244,23 +2217,72 @@ function openSubjectDetails(subjectName) {
         }
         function closeModernConfirm() { playClick(); document.getElementById('modernConfirmModal').style.display = 'none'; pendingAction = null; }
 
-        async function deleteEntry(id, btn) {
-            showModernConfirm("حذف سجل", "سيتم حذف الطالب من السيرفر. هل أنت متأكد؟", async function() {
-                const card = btn.closest('.student-detailed-card'); btn.innerHTML = '<i class="fa-solid fa-spinner fa-spin"></i>';
+        // *** دالة الحذف الفعلية من السيرفر ***
+        async function deleteEntry(id, subject, btn) {
+            showModernConfirm("حذف نهائي", "سيتم حذف الطالب من السجل ومن السيرفر نهائياً. هل أنت متأكد؟", async function() {
+                const card = btn.closest('.student-detailed-card'); 
+                btn.innerHTML = '<i class="fa-solid fa-spinner fa-spin"></i>';
+                
                 try {
-                    // في النظام الجديد (40 شيت)، الحذف يتطلب معرفة الرابط الصحيح
-                    // للتبسيط، هذه الدالة تحتاج لتحديث إذا أردت حذف دقيق، أو يمكنك تركها لإشعار المستخدم فقط حالياً
-                    alert("يرجى الحذف من شيت الجروب مباشرة.");
+                    const params = new URLSearchParams();
+                    params.append("action", "deleteEntry");
+                    params.append("id", id);
+                    params.append("subject", subject);
+
+                    await fetch(MASTER_REGISTRATION_LINK, { 
+                        method: 'POST', 
+                        mode: 'no-cors', // هنا نستخدم no-cors للسرعة لأننا لا نحتاج رد معقد، الحذف سيتم
+                        headers: { 'Content-Type': 'application/x-www-form-urlencoded' }, 
+                        body: params.toString() 
+                    });
+
                     card.style.opacity = '0';
                     setTimeout(() => { card.remove(); }, 300);
-                } catch(e) { alert("فشل الحذف"); }
+                    showToast("تم الحذف من السيرفر.", 2000, '#ef4444');
+
+                } catch(e) { 
+                    alert("فشل الحذف. تأكد من الاتصال بالإنترنت."); 
+                    btn.innerHTML = '<i class="fa-solid fa-trash"></i>';
+                }
             });
+        }
+
+        // *** دالة التحديد (Highlight) الجديدة ***
+        async function highlightEntry(id, subject, btn) {
+            playClick();
+            const card = btn.closest('.student-detailed-card');
+            
+            // تغيير فوري للواجهة (UI Feedback)
+            if (card.classList.contains('highlighted-red')) {
+                card.classList.remove('highlighted-red');
+            } else {
+                card.classList.add('highlighted-red');
+            }
+
+            // إرسال الطلب للسيرفر في الخلفية
+            try {
+                const params = new URLSearchParams();
+                params.append("action", "highlightUser");
+                params.append("id", id);
+                params.append("subject", subject);
+
+                fetch(MASTER_REGISTRATION_LINK, { 
+                    method: 'POST', 
+                    mode: 'no-cors', 
+                    headers: { 'Content-Type': 'application/x-www-form-urlencoded' }, 
+                    body: params.toString() 
+                });
+            } catch(e) { console.log("Highlight Error: " + e); }
         }
 
         async function clearAllReport() {
             showModernConfirm("تصفيه السجل", "سيتم مسح البيانات. هل أنت متأكد؟", async function() {
                  document.getElementById('subjectsContainer').innerHTML = '<div style="padding:20px; text-align:center;">جاري الحذف...</div>';
                  // منطق الحذف الشامل
+                 const params = new URLSearchParams();
+                 params.append("action", "clearAll");
+                 fetch(MASTER_REGISTRATION_LINK, { method: 'POST', mode: 'no-cors', body: params });
+
                  document.getElementById('subjectsContainer').innerHTML = '<div class="empty-state">تم التنظيف.</div>'; playSuccess();
             });
         }
