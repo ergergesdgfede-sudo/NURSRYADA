@@ -1053,11 +1053,11 @@
 
         const CONFIG = {
             sheetApiUrl: MASTER_REGISTRATION_LINK, 
-            identitySheetUrl: "https://script.google.com/macros/s/AKfycbwx09rtHtsefAcu-09Bn5boBsLKGpivHgFcpYcnwSQIaSLja-wRzq3PLgAHTCx2te2E/exec",
-            adminPassword: "RYADANUR1",
+            identitySheetUrl: "https://script.google.com/macros/s/AKfycbz4pXwNKmy_qh5XHDWipk6h-HRouUMV7NQH2pjyfv9kTdhKnV5oIaqa7PvAJmeOXcVX/exec",
+            // تم حذف كلمة المرور من هنا للأمان (Server-Side Validation)
             gps: { 
-                targetLat: 30.385839819568105,  
-                targetLong: 30.488877976075997, 
+                targetLat: 30.438423524130314,  
+                targetLong: 30.836766585591185, 
                 allowedDistanceKm: 5       
             },
             modelsUrl: 'https://justadudewhohacks.github.io/face-api.js/models'
@@ -2074,13 +2074,59 @@
         async function stopCameraSafely() { if(html5QrCode && html5QrCode.isScanning) { try { await html5QrCode.stop(); } catch(e) {} } document.getElementById('qr-reader').style.display = 'none'; releaseWakeLock(); }
         function retryCamera() { document.getElementById('cameraErrorModal').style.display = 'none'; proceedToCamera(); } 
         async function startQrScanner() { playClick(); requestWakeLock(); await stopCameraSafely(); document.getElementById('startScanCard').style.display = 'none'; document.getElementById('qr-reader').style.display = 'block'; document.getElementById('qr-reader').innerHTML = '<div class="scanner-laser" style="display:block"></div>'; document.getElementById('submitBtn').disabled = true; document.getElementById('sessionPass').value = ''; html5QrCode = new Html5Qrcode("qr-reader"); try { await html5QrCode.start({ facingMode: "environment" }, { fps: 10, qrbox: { width: 250, height: 250 } }, (t) => { playBeep(); html5QrCode.stop().then(() => { document.getElementById('qr-reader').style.display = 'none'; document.getElementById('scanSuccessMsg').style.display = 'flex'; document.getElementById('sessionPass').value = t; checkAllConditions(); if(navigator.vibrate) navigator.vibrate([100,50,100]); releaseWakeLock(); }); }); } catch (err) { await stopCameraSafely(); document.getElementById('startScanCard').style.display = 'none'; document.getElementById('retryCamBtn').style.display = 'flex'; document.getElementById('cameraErrorModal').style.display = 'flex'; } }
-        function checkAdminPassword() { 
+        
+        // ===============================================
+        // Updated Function: Server-Side Password Check
+        // ===============================================
+        async function checkAdminPassword() { 
             playClick(); 
-            if (document.getElementById('adminPassword').value === CONFIG.adminPassword) { 
-                playSuccess(); const modal = document.getElementById('adminSuccessModal'); modal.style.display = 'flex';
-                setTimeout(() => { modal.style.display = 'none'; sessionStorage.setItem(DOCTOR_MODE_KEY, 'true'); updateUIForMode(); switchScreen('screenWelcome'); }, 2000);
-            } else { document.getElementById('adminAlert').innerText = "❌ خطأ"; document.getElementById('adminAlert').style.display = 'block'; document.getElementById('adminPassword').value = ''; } 
+            const pwd = document.getElementById('adminPassword').value;
+            const btn = document.querySelector('#screenAdminLogin .btn-main');
+            const alertBox = document.getElementById('adminAlert');
+            
+            if(!pwd) return;
+            
+            const oldText = btn.innerHTML;
+            btn.innerHTML = '<i class="fa-solid fa-circle-notch fa-spin"></i> جاري التحقق...';
+            btn.disabled = true;
+            alertBox.style.display = 'none';
+
+            try {
+                const response = await fetch(CONFIG.identitySheetUrl, { 
+                    method: 'POST', 
+                    mode: 'cors', 
+                    headers: {'Content-Type': 'text/plain'}, 
+                    body: JSON.stringify({ action: "login_admin", password: pwd }) 
+                });
+                
+                const result = await response.json();
+
+                if (result.status === "success") { 
+                    playSuccess(); 
+                    const modal = document.getElementById('adminSuccessModal'); 
+                    modal.style.display = 'flex';
+                    document.getElementById('adminPassword').value = '';
+                    setTimeout(() => { 
+                        modal.style.display = 'none'; 
+                        sessionStorage.setItem(DOCTOR_MODE_KEY, 'true'); 
+                        updateUIForMode(); 
+                        switchScreen('screenWelcome'); 
+                    }, 2000);
+                } else { 
+                    throw new Error("Wrong Password");
+                } 
+            } catch (e) {
+                console.error(e);
+                alertBox.innerText = "❌ كلمة المرور غير صحيحة"; 
+                alertBox.style.display = 'block'; 
+                document.getElementById('adminPassword').value = ''; 
+                if(navigator.vibrate) navigator.vibrate(300);
+            } finally {
+                btn.innerHTML = oldText;
+                btn.disabled = false;
+            }
         }
+
         function showError(msg, isPermanent = false) { if(countdownInterval) clearInterval(countdownInterval); document.getElementById('errorMsg').innerHTML = msg; const retryBtn = document.getElementById('retryBtn'); if(isPermanent) retryBtn.style.display = 'none'; else { retryBtn.style.display = 'inline-block'; retryBtn.onclick = function() { location.reload(); }; } switchScreen('screenError'); if(navigator.vibrate) navigator.vibrate(300); }
         function performLogout() { playClick(); sessionStorage.removeItem(DOCTOR_MODE_KEY); location.reload(); }
         function openLogoutModal() { playClick(); document.getElementById('customLogoutModal').style.display = 'flex'; }
@@ -2321,3 +2367,4 @@
     </script>
 </body>
 </html>
+
