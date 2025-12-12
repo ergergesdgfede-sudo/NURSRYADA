@@ -3,102 +3,77 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>موقعي | جاري التحديثات</title>
+    <title>جاري التحديثات</title>
+    <link href="https://fonts.googleapis.com/css2?family=Tajawal:wght@400;700&display=swap" rel="stylesheet">
     <style>
-        /* 1. تنسيق الصفحة الأساسي (فقط للعرض) */
-        body {
+        * {
+            box-sizing: border-box;
             margin: 0;
             padding: 0;
-            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-            background-color: #f9f9f9;
-            /* هام: إزاحة الصفحة للأسفل بمقدار ارتفاع شريط التنبيه لكي لا يغطي القائمة */
-            padding-top: 60px; 
-            transition: padding-top 0.3s ease;
         }
 
-        /* 2. تنسيق شريط التنبيهات */
-        #update-bar {
-            background-color: #e67e22; /* لون برتقالي */
-            color: white;
-            text-align: center;
-            padding: 15px;
-            position: fixed; /* تثبيت في أعلى الشاشة */
-            top: 0;
-            left: 0;
-            width: 100%;
-            z-index: 9999; /* يظهر فوق كل شيء */
-            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
-            box-sizing: border-box;
+        body {
+            height: 100vh;
             display: flex;
             justify-content: center;
             align-items: center;
-            gap: 10px;
+            background-color: #f0f2f5;
+            font-family: 'Tajawal', sans-serif;
+            color: #333;
         }
 
-        /* زر الإغلاق */
-        .close-btn {
-            background: rgba(255, 255, 255, 0.2);
-            border: none;
-            color: white;
-            padding: 5px 10px;
-            cursor: pointer;
-            border-radius: 5px;
-            font-weight: bold;
-            margin-right: 20px; /* مسافة بين النص والزر */
-        }
-
-        .close-btn:hover {
-            background: rgba(255, 255, 255, 0.4);
-        }
-
-        /* 3. تنسيق محتوى الموقع (فقط كمثال) */
-        .website-content {
-            max-width: 800px;
-            margin: 20px auto;
-            padding: 20px;
+        .maintenance-card {
             background: white;
-            border-radius: 8px;
-            box-shadow: 0 2px 5px rgba(0,0,0,0.05);
-        }
-        
-        header {
-            background: #333;
-            color: white;
-            padding: 15px;
-            border-radius: 8px;
-            margin-bottom: 20px;
+            padding: 50px 40px;
+            border-radius: 20px;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.08);
             text-align: center;
+            max-width: 500px;
+            width: 90%;
+            transition: transform 0.3s ease;
+        }
+
+        .maintenance-card:hover {
+            transform: translateY(-5px);
+        }
+
+        /* تصميم أيقونة التحديث المتحركة */
+        .loader {
+            width: 60px;
+            height: 60px;
+            border: 5px solid #e1e4e8;
+            border-top: 5px solid #3498db; /* لون أزرق مودرن */
+            border-radius: 50%;
+            margin: 0 auto 30px auto;
+            animation: spin 1s linear infinite;
+        }
+
+        h1 {
+            font-size: 28px;
+            margin-bottom: 15px;
+            color: #2c3e50;
+        }
+
+        p {
+            font-size: 16px;
+            color: #7f8c8d;
+            line-height: 1.6;
+        }
+
+        /* أنيميشن الدوران */
+        @keyframes spin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
         }
     </style>
 </head>
 <body>
 
-    <div id="update-bar">
-        <span>⚙️ <strong>تنبيه:</strong> يجري حالياً عمل تحديثات في الموقع، نعتذر عن أي بطء مؤقت.</span>
-        <button class="close-btn" onclick="closeBar()">حسناً، فهمت</button>
+    <div class="maintenance-card">
+        <div class="loader"></div>
+        <h1>جاري عمل تحديثات</h1>
+        <p>نقوم حالياً بإجراء بعض التحسينات الهامة على الموقع لتقديم تجربة أفضل.<br> سنعود للعمل خلال وقت قصير.</p>
     </div>
-    <div class="website-content">
-        <header>
-            <h2>شعار الموقع / القائمة الرئيسية</h2>
-        </header>
-        
-        <h1>أهلاً بك في موقعنا</h1>
-        <p>هذا النص يمثل محتوى موقعك الأصلي.</p>
-        <p>لاحظ أن شريط التنبيهات ثابت في الأعلى ولا يختفي عند النزول، لكنه لا يغطي القائمة السوداء لأننا أضفنا مسافة (padding-top) للصفحة.</p>
-        <br>
-        <p>نص تجريبي طويل... نص تجريبي طويل... نص تجريبي طويل...</p>
-        <p>نص تجريبي طويل... نص تجريبي طويل... نص تجريبي طويل...</p>
-        <p>نص تجريبي طويل... نص تجريبي طويل... نص تجريبي طويل...</p>
-    </div>
-
-    <script>
-        // دالة لإغلاق الشريط وإعادة الصفحة لوضعها الطبيعي
-        function closeBar() {
-            var bar = document.getElementById('update-bar');
-            bar.style.display = 'none'; // إخفاء الشريط
-            document.body.style.paddingTop = '0'; // إزالة المسافة العلوية
-        }
-    </script>
 
 </body>
 </html>
